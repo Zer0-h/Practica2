@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Color;
 import javax.swing.SwingUtilities;
 import view.TrominoPanel;
 
@@ -10,7 +11,13 @@ public class TrominoModel {
     private int fixedX, fixedY;
     private int currentNum;
     private TrominoPanel view;
-    private volatile boolean isStopped = false; // Stop flag
+    private volatile boolean isStopped = false;
+
+    // Colors for trominoes
+    private static final Color[] TROMINO_COLORS = {
+        Color.RED, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.GREEN,
+        Color.ORANGE, Color.CYAN, Color.PINK
+    };
 
     public TrominoModel(int size, int fixedX, int fixedY, TrominoPanel view) {
         int actualSize = 1;
@@ -33,14 +40,15 @@ public class TrominoModel {
     }
 
     public void solveTromino() {
-        isStopped = false; // Reset stop flag
+        isStopped = false;
         tileRec(boardSize, 0, 0, fixedX, fixedY);
     }
 
     private void tileRec(int size, int topX, int topY, int holeX, int holeY) {
         if (isStopped) {
-            return; // Stop immediately if requested
+            return;
         }
+
         if (size == 2) {
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
@@ -104,5 +112,12 @@ public class TrominoModel {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    public static Color getColorForTromino(int id) {
+        if (id <= 0) {
+            return Color.WHITE; // Default background
+        }
+        return TROMINO_COLORS[(id - 1) % TROMINO_COLORS.length]; // Cycle through colors
     }
 }

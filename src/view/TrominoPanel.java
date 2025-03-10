@@ -1,9 +1,8 @@
 package view;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.*;
+import model.TrominoModel;
 
 public class TrominoPanel extends JPanel {
 
@@ -16,31 +15,30 @@ public class TrominoPanel extends JPanel {
         setPreferredSize(new Dimension(600, 600));
         board = new int[size][size];
 
-        addMouseListener(new MouseAdapter() {
+        addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (solvingStarted) {
-                    return; // Prevent changes after solving
+                    return;
                 }
-                int panelSize = Math.min(getWidth(), getHeight()); // Ensure square fit
-                int tileSize = panelSize / board.length; // Compute dynamic tile size
+
+                int panelSize = Math.min(getWidth(), getHeight());
+                int tileSize = panelSize / board.length;
 
                 int x = e.getY() / tileSize;
                 int y = e.getX() / tileSize;
 
-                // Prevent out-of-bounds clicks
                 if (x >= board.length || y >= board.length) {
                     return;
                 }
 
-                // Allow changing the missing tile until solving starts
                 if (tileSelected) {
-                    board[fixedX][fixedY] = 0; // Reset previous tile
+                    board[fixedX][fixedY] = 0;
                 }
 
                 fixedX = x;
                 fixedY = y;
-                board[fixedX][fixedY] = -1; // Set new missing tile
+                board[fixedX][fixedY] = -1;
                 tileSelected = true;
                 repaint();
             }
@@ -49,7 +47,7 @@ public class TrominoPanel extends JPanel {
 
     public void updateBoard(int[][] newBoard) {
         board = newBoard;
-        solvingStarted = true; // Hide initial grid when solving starts
+        solvingStarted = true;
         repaint();
     }
 
@@ -73,55 +71,31 @@ public class TrominoPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int panelSize = Math.min(getWidth(), getHeight()); // Square board fit
-        int tileSize = panelSize / board.length; // Compute correct tile size
+        int panelSize = Math.min(getWidth(), getHeight());
+        int tileSize = panelSize / board.length;
 
-        // Step 1: Draw the initial grid with black borders
         if (!solvingStarted) {
             g.setColor(Color.BLACK);
             for (int i = 0; i <= board.length; i++) {
-                g.drawLine(0, i * tileSize, board.length * tileSize, i * tileSize); // Horizontal lines
-                g.drawLine(i * tileSize, 0, i * tileSize, board.length * tileSize); // Vertical lines
+                g.drawLine(0, i * tileSize, board.length * tileSize, i * tileSize);
+                g.drawLine(i * tileSize, 0, i * tileSize, board.length * tileSize);
             }
         }
 
-        // Step 2: Highlight the selected missing tile (before solving)
-        if (!solvingStarted && tileSelected) {
-            int x = fixedY * tileSize;
-            int y = fixedX * tileSize;
-            g.setColor(Color.BLACK);
-            g.fillRect(x, y, tileSize, tileSize);
-        }
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                int x = j * tileSize;
+                int y = i * tileSize;
 
-        // Step 3: Draw the trominoes after solving
-        if (solvingStarted) {
-            g.setColor(Color.BLACK);
-            for (int i = 0; i < board.length; i++) {
-                for (int j = 0; j < board[i].length; j++) {
-                    int x = j * tileSize;
-                    int y = i * tileSize;
+                if (board[i][j] == -1) {
+                    g.setColor(Color.BLACK);
+                    g.fillRect(x, y, tileSize, tileSize);
+                } else if (board[i][j] > 0) {
+                    g.setColor(TrominoModel.getColorForTromino(board[i][j]));
+                    g.fillRect(x, y, tileSize, tileSize);
 
-                    if (board[i][j] == -1) {
-                        g.fillRect(x, y, tileSize, tileSize); // Keep the fixed tile black
-                    } else if (board[i][j] > 0) { // Part of a tromino
-                        // Draw only the borders of tromino tiles
-                        if (i == 0 || board[i - 1][j] != board[i][j]) // Top border
-                        {
-                            g.drawLine(x, y, x + tileSize, y);
-                        }
-                        if (j == 0 || board[i][j - 1] != board[i][j]) // Left border
-                        {
-                            g.drawLine(x, y, x, y + tileSize);
-                        }
-                        if (i == board.length - 1 || board[i + 1][j] != board[i][j]) // Bottom border
-                        {
-                            g.drawLine(x, y + tileSize, x + tileSize, y + tileSize);
-                        }
-                        if (j == board[i].length - 1 || board[i][j + 1] != board[i][j]) // Right border
-                        {
-                            g.drawLine(x + tileSize, y, x + tileSize, y + tileSize);
-                        }
-                    }
+                    g.setColor(Color.BLACK);
+                    g.drawRect(x, y, tileSize, tileSize);
                 }
             }
         }
