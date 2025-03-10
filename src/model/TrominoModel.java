@@ -1,11 +1,14 @@
 package model;
 
+import java.awt.Color;
+
 public class TrominoModel {
 
     private int[][] board;
     private int boardSize;
     private int fixedX, fixedY;
     private int trominoCounter = 1;
+    private final Color[] colors = {Color.RED, Color.GREEN, Color.YELLOW, Color.MAGENTA};
 
     public TrominoModel(int size, int fixedX, int fixedY) {
         this.boardSize = size;
@@ -16,45 +19,67 @@ public class TrominoModel {
     }
 
     public void solveTromino() {
-        tromino(0, 0, boardSize, fixedX, fixedY);
+        placeTromino(0, 0);
     }
 
-    private void tromino(int x, int y, int size, int fx, int fy) {
-        if (size == 2) { // Base case: 2x2 grid
-            int t = trominoCounter++;
-            for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < 2; j++) {
-                    if (board[x + i][y + j] == 0) {
-                        board[x + i][y + j] = t;
-                    }
+    private boolean placeTromino(int row, int col) {
+        if (row >= boardSize) {
+            return true;
+        }
+
+        int nextRow = (col + 1) >= boardSize ? row + 1 : row;
+        int nextCol = (col + 1) >= boardSize ? 0 : col + 1;
+
+        if (board[row][col] != 0) {
+            return placeTromino(nextRow, nextCol);
+        }
+
+        // Try placing each L-shaped tromino
+        for (int[][] shape : new int[][][]{
+            {{0, 0}, {0, 1}, {1, 0}}, // L-shape 1
+            {{0, 0}, {0, 1}, {1, 1}}, // L-shape 2
+            {{0, 0}, {1, 0}, {1, 1}}, // L-shape 3
+            {{0, 1}, {1, 0}, {1, 1}} // L-shape 4
+        }) {
+            if (canPlace(row, col, shape)) {
+                for (int[] s : shape) {
+                    board[row + s[0]][col + s[1]] = trominoCounter;
                 }
-            }
-            return;
-        }
+                trominoCounter++;
 
-        int mid = size / 2;
-        int centerX = x + mid, centerY = y + mid;
+                if (placeTromino(nextRow, nextCol)) {
+                    return true;
+                }
 
-        // Determine which quadrant contains the fixed tile
-        int[] qx = {x, x, centerX, centerX};
-        int[] qy = {y, centerY, y, centerY};
-        int quadrant = (fx >= centerX ? 2 : 0) + (fy >= centerY ? 1 : 0);
-
-        // Place tromino at center, leaving one tile open in each sub-board
-        for (int i = 0; i < 4; i++) {
-            if (i != quadrant) {
-                board[qx[i] + (i / 2)][qy[i] + (i % 2)] = trominoCounter;
+                // Backtrack
+                for (int[] s : shape) {
+                    board[row + s[0]][col + s[1]] = 0;
+                }
+                trominoCounter--;
             }
         }
-        trominoCounter++;
 
-        // Recursively fill each quadrant
-        for (int i = 0; i < 4; i++) {
-            tromino(qx[i], qy[i], mid, i == quadrant ? fx : qx[i] + (i / 2), i == quadrant ? fy : qy[i] + (i % 2));
+        return false;
+    }
+
+    private boolean canPlace(int row, int col, int[][] shape) {
+        for (int[] s : shape) {
+            int r = row + s[0];
+            int c = col + s[1];
+            if (r >= boardSize || c >= boardSize || board[r][c] != 0) {
+                return false;
+            }
         }
+        return true;
     }
 
     public int[][] getBoard() {
         return board;
+    }
+
+    public void clearBoard() {
+        board = new int[boardSize][boardSize];
+        board[fixedX][fixedY] = -1; // Reset fixed tile
+        trominoCounter = 1;
     }
 }
