@@ -30,10 +30,10 @@ public class TrominoController {
             }
 
             model = new TrominoModel(size, fixedX, fixedY, view.getBoardPanel(), view);
-            view.setSolving(true); // Disable size selector
+            view.setSolving(true);
             new Thread(() -> {
                 model.solveTromino();
-                view.setSolving(false); // Re-enable selector after solving
+                view.setSolving(false);
             }).start();
         }
     }
@@ -42,7 +42,7 @@ public class TrominoController {
 
         public void actionPerformed(ActionEvent e) {
             view.getBoardPanel().clearBoard();
-            view.setSolving(false); // Ensure selector is enabled after clearing
+            view.setSolving(false);
         }
     }
 
@@ -51,7 +51,7 @@ public class TrominoController {
         public void actionPerformed(ActionEvent e) {
             if (model != null) {
                 model.stopTromino();
-                view.setSolving(false); // Re-enable selector when stopping
+                view.setSolving(false);
             }
         }
     }

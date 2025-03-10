@@ -12,8 +12,9 @@ public class TrominoModel {
     private int fixedX, fixedY;
     private int currentNum;
     private TrominoPanel view;
-    private TrominoView mainView; // Reference to the UI for speed control
+    private TrominoView mainView;
     private volatile boolean isStopped = false;
+    private static double CM = 1.0; // Cost multiplier for execution time estimation
 
     private static final Color[] TROMINO_COLORS = {
         Color.RED, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.GREEN,
@@ -41,9 +42,22 @@ public class TrominoModel {
         board[fixedX][fixedY] = -1;
     }
 
+    public double estimateExecutionTime() {
+        long estimatedCalls = (long) Math.pow(4, Math.log(boardSize) / Math.log(2));
+        return (CM * estimatedCalls) / 1000.0; // Convert to seconds
+    }
+
     public void solveTromino() {
+        System.out.println("Estimated time: " + estimateExecutionTime() + " seconds.");
         isStopped = false;
+        long startTime = System.currentTimeMillis();
         tileRec(boardSize, 0, 0, fixedX, fixedY);
+        if (!isStopped) {
+            mainView.setSolving(false);
+        }
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        CM = (elapsedTime * 1.0) / Math.pow(4, Math.log(boardSize) / Math.log(2));
+        System.out.println("Actual execution time: " + (elapsedTime / 1000.0) + " seconds.");
     }
 
     private void tileRec(int size, int topX, int topY, int holeX, int holeY) {
@@ -98,10 +112,7 @@ public class TrominoModel {
 
     public void stopTromino() {
         isStopped = true;
-    }
-
-    public int[][] getBoard() {
-        return board;
+        mainView.setSolving(false);
     }
 
     private void updateView() {
@@ -110,8 +121,7 @@ public class TrominoModel {
 
     private void sleep() {
         try {
-            double sleepTime = mainView.getSelectedSpeed() * 1000; // Convert to milliseconds
-            Thread.sleep((long) sleepTime);
+            Thread.sleep(1);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
