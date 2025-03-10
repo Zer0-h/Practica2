@@ -1,13 +1,17 @@
 package model;
 
+import javax.swing.SwingUtilities;
+import view.TrominoPanel;
+
 public class TrominoModel {
 
     private int[][] board;
     private int boardSize;
     private int fixedX, fixedY;
     private int currentNum;
+    private TrominoPanel view; // Reference to the view for live updates
 
-    public TrominoModel(int size, int fixedX, int fixedY) {
+    public TrominoModel(int size, int fixedX, int fixedY, TrominoPanel view) {
         int actualSize = 1;
         while (actualSize < size) {
             actualSize *= 2;
@@ -17,6 +21,7 @@ public class TrominoModel {
         this.fixedY = fixedY;
         this.board = new int[boardSize][boardSize];
         this.currentNum = 1;
+        this.view = view;
 
         // Initialize board with 0s and set fixed tile
         for (int i = 0; i < boardSize; i++) {
@@ -44,6 +49,8 @@ public class TrominoModel {
                 }
             }
             currentNum++;
+            updateView(); // Update the UI
+            sleep(); // Pause for visualization
             return;
         }
 
@@ -71,6 +78,8 @@ public class TrominoModel {
         }
 
         currentNum++;
+        updateView(); // Update the UI
+        sleep(); // Pause for visualization
 
         // Recursively process quadrants
         tileRec(size / 2, topX, topY, inUpperLeft ? holeX : centerX, inUpperLeft ? holeY : centerY); // Upper Left
@@ -87,5 +96,19 @@ public class TrominoModel {
         board = new int[boardSize][boardSize];
         board[fixedX][fixedY] = -1; // Preserve fixed tile
         currentNum = 1;
+    }
+
+    private void updateView() {
+        SwingUtilities.invokeLater(() -> {
+            view.updateBoard(board); // Refresh UI
+        });
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(100); // 1 second delay
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
