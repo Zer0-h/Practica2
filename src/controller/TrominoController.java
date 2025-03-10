@@ -24,7 +24,9 @@ public class TrominoController {
             int fixedX = view.getBoardPanel().getFixedX();
             int fixedY = view.getBoardPanel().getFixedY();
 
+            // Ensure the user has selected a missing tile before solving
             if (fixedX == -1 || fixedY == -1) {
+                System.out.println("Please select a missing tile before solving.");
                 return;
             }
 
