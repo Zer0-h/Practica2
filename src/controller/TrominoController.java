@@ -29,7 +29,7 @@ public class TrominoController {
                 return;
             }
 
-            model = new TrominoModel(size, fixedX, fixedY, view.getBoardPanel());
+            model = new TrominoModel(size, fixedX, fixedY, view.getBoardPanel(), view);
             view.setSolving(true); // Disable size selector
             new Thread(() -> {
                 model.solveTromino();

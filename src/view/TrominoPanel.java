@@ -12,7 +12,7 @@ public class TrominoPanel extends JPanel {
     private boolean solvingStarted = false;
 
     public TrominoPanel(int size) {
-        setPreferredSize(new Dimension(600, 600));
+        setPreferredSize(new Dimension(896, 896));
         board = new int[size][size];
 
         addMouseListener(new java.awt.event.MouseAdapter() {

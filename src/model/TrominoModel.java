@@ -3,6 +3,7 @@ package model;
 import java.awt.Color;
 import javax.swing.SwingUtilities;
 import view.TrominoPanel;
+import view.TrominoView;
 
 public class TrominoModel {
 
@@ -11,15 +12,15 @@ public class TrominoModel {
     private int fixedX, fixedY;
     private int currentNum;
     private TrominoPanel view;
+    private TrominoView mainView; // Reference to the UI for speed control
     private volatile boolean isStopped = false;
 
-    // Colors for trominoes
     private static final Color[] TROMINO_COLORS = {
         Color.RED, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.GREEN,
         Color.ORANGE, Color.CYAN, Color.PINK
     };
 
-    public TrominoModel(int size, int fixedX, int fixedY, TrominoPanel view) {
+    public TrominoModel(int size, int fixedX, int fixedY, TrominoPanel view, TrominoView mainView) {
         int actualSize = 1;
         while (actualSize < size) {
             actualSize *= 2;
@@ -30,6 +31,7 @@ public class TrominoModel {
         this.board = new int[boardSize][boardSize];
         this.currentNum = 1;
         this.view = view;
+        this.mainView = mainView;
 
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -108,7 +110,8 @@ public class TrominoModel {
 
     private void sleep() {
         try {
-            Thread.sleep(100);
+            double sleepTime = mainView.getSelectedSpeed() * 1000; // Convert to milliseconds
+            Thread.sleep((long) sleepTime);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -116,8 +119,8 @@ public class TrominoModel {
 
     public static Color getColorForTromino(int id) {
         if (id <= 0) {
-            return Color.WHITE; // Default background
+            return Color.WHITE;
         }
-        return TROMINO_COLORS[(id - 1) % TROMINO_COLORS.length]; // Cycle through colors
+        return TROMINO_COLORS[(id - 1) % TROMINO_COLORS.length];
     }
 }
