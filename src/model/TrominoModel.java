@@ -50,13 +50,13 @@ public class TrominoModel {
         int centerX = topX + size / 2 - 1;
         int centerY = topY + size / 2 - 1;
 
-        // Identify quadrant with hole
+        // Identify which quadrant contains the missing tile
         boolean inUpperLeft = holeX < topX + size / 2 && holeY < topY + size / 2;
         boolean inUpperRight = holeX < topX + size / 2 && holeY >= topY + size / 2;
         boolean inBottomLeft = holeX >= topX + size / 2 && holeY < topY + size / 2;
         boolean inBottomRight = holeX >= topX + size / 2 && holeY >= topY + size / 2;
 
-        // Place L-shaped tromino, ensuring fixed tile is not overwritten
+        // Place a tromino in the center
         if (!inUpperLeft) {
             board[centerX][centerY] = currentNum;
         }
