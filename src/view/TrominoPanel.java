@@ -93,9 +93,35 @@ public class TrominoPanel extends JPanel {
                 } else if (board[i][j] > 0) {
                     g.setColor(TrominoModel.getColorForTromino(board[i][j]));
                     g.fillRect(x, y, tileSize, tileSize);
+                }
+            }
+        }
 
-                    g.setColor(Color.BLACK);
-                    g.drawRect(x, y, tileSize, tileSize);
+        // Draw borders around each tromino piece
+        g.setColor(Color.BLACK);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] > 0) {
+                    int x = j * tileSize;
+                    int y = i * tileSize;
+
+                    // Check if this is the edge of a tromino (to avoid inner borders)
+                    if (i == 0 || board[i - 1][j] != board[i][j]) // Top
+                    {
+                        g.drawLine(x, y, x + tileSize, y);
+                    }
+                    if (j == 0 || board[i][j - 1] != board[i][j]) // Left
+                    {
+                        g.drawLine(x, y, x, y + tileSize);
+                    }
+                    if (i == board.length - 1 || board[i + 1][j] != board[i][j]) // Bottom
+                    {
+                        g.drawLine(x, y + tileSize, x + tileSize, y + tileSize);
+                    }
+                    if (j == board[i].length - 1 || board[i][j + 1] != board[i][j]) // Right
+                    {
+                        g.drawLine(x + tileSize, y, x + tileSize, y + tileSize);
+                    }
                 }
             }
         }
