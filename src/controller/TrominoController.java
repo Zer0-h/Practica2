@@ -15,6 +15,7 @@ public class TrominoController {
         view.getStartButton().addActionListener(new StartButtonListener());
         view.getClearButton().addActionListener(new ClearButtonListener());
         view.getSizeButton().addActionListener(new SizeButtonListener());
+        view.getStopButton().addActionListener(new StopButtonListener()); // NEW Stop Button
     }
 
     class StartButtonListener implements ActionListener {
@@ -30,7 +31,7 @@ public class TrominoController {
             }
 
             model = new TrominoModel(size, fixedX, fixedY, view.getBoardPanel());
-            new Thread(() -> model.solveTromino()).start(); // Run in a separate thread
+            new Thread(() -> model.solveTromino()).start();
         }
     }
 
@@ -46,6 +47,15 @@ public class TrominoController {
         public void actionPerformed(ActionEvent e) {
             view.getBoardPanel().updateBoard(new int[(int) view.getSizeSelector().getSelectedItem()][(int) view.getSizeSelector().getSelectedItem()]);
             view.getBoardPanel().clearBoard();
+        }
+    }
+
+    class StopButtonListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            if (model != null) {
+                model.stopTromino();
+            }
         }
     }
 }
