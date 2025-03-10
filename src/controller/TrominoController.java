@@ -14,8 +14,7 @@ public class TrominoController {
         this.view = view;
         view.getStartButton().addActionListener(new StartButtonListener());
         view.getClearButton().addActionListener(new ClearButtonListener());
-        view.getSizeButton().addActionListener(new SizeButtonListener());
-        view.getStopButton().addActionListener(new StopButtonListener()); // NEW Stop Button
+        view.getStopButton().addActionListener(new StopButtonListener());
     }
 
     class StartButtonListener implements ActionListener {
@@ -31,7 +30,11 @@ public class TrominoController {
             }
 
             model = new TrominoModel(size, fixedX, fixedY, view.getBoardPanel());
-            new Thread(() -> model.solveTromino()).start();
+            view.setSolving(true); // Disable size selector
+            new Thread(() -> {
+                model.solveTromino();
+                view.setSolving(false); // Re-enable selector after solving
+            }).start();
         }
     }
 
@@ -39,14 +42,7 @@ public class TrominoController {
 
         public void actionPerformed(ActionEvent e) {
             view.getBoardPanel().clearBoard();
-        }
-    }
-
-    class SizeButtonListener implements ActionListener {
-
-        public void actionPerformed(ActionEvent e) {
-            view.getBoardPanel().updateBoard(new int[(int) view.getSizeSelector().getSelectedItem()][(int) view.getSizeSelector().getSelectedItem()]);
-            view.getBoardPanel().clearBoard();
+            view.setSolving(false); // Ensure selector is enabled after clearing
         }
     }
 
@@ -55,6 +51,7 @@ public class TrominoController {
         public void actionPerformed(ActionEvent e) {
             if (model != null) {
                 model.stopTromino();
+                view.setSolving(false); // Re-enable selector when stopping
             }
         }
     }

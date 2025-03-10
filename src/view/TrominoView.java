@@ -1,11 +1,15 @@
 package view;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class TrominoView extends JFrame {
 
-    private JButton startButton, clearButton, sizeButton, stopButton;
+    private static final Integer[] BOARD_SIZES = {4, 8, 16, 32, 64, 128}; // Saved sizes
+
+    private JButton startButton, clearButton, stopButton;
     private JComboBox<Integer> sizeSelector;
     private TrominoPanel boardPanel;
 
@@ -14,24 +18,36 @@ public class TrominoView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Control Panel
         JPanel controlPanel = new JPanel();
-        sizeSelector = new JComboBox<>(new Integer[]{4, 8, 16, 32, 64, 128});
+        sizeSelector = new JComboBox<>(BOARD_SIZES);
         startButton = new JButton("Solve");
         clearButton = new JButton("Clear");
-        sizeButton = new JButton("Size");
-        stopButton = new JButton("Stop"); // NEW Stop Button
+        stopButton = new JButton("Stop");
 
         controlPanel.add(new JLabel("Board Size:"));
         controlPanel.add(sizeSelector);
         controlPanel.add(startButton);
         controlPanel.add(clearButton);
-        controlPanel.add(sizeButton);
-        controlPanel.add(stopButton); // Add Stop Button to UI
+        controlPanel.add(stopButton);
 
         add(controlPanel, BorderLayout.NORTH);
 
-        boardPanel = new TrominoPanel(4);
+        // Initialize board with first size in BOARD_SIZES
+        boardPanel = new TrominoPanel(BOARD_SIZES[0]);
         add(boardPanel, BorderLayout.CENTER);
+
+        // Listener to update board when size changes
+        sizeSelector.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!isSolving()) { // Prevent changing size while solving
+                    int newSize = (int) sizeSelector.getSelectedItem();
+                    boardPanel.updateBoard(new int[newSize][newSize]);
+                    boardPanel.clearBoard();
+                }
+            }
+        });
 
         pack();
         setLocationRelativeTo(null);
@@ -46,11 +62,7 @@ public class TrominoView extends JFrame {
         return clearButton;
     }
 
-    public JButton getSizeButton() {
-        return sizeButton;
-    }
-
-    public JButton getStopButton() { // Getter for Stop Button
+    public JButton getStopButton() {
         return stopButton;
     }
 
@@ -60,5 +72,13 @@ public class TrominoView extends JFrame {
 
     public TrominoPanel getBoardPanel() {
         return boardPanel;
+    }
+
+    public void setSolving(boolean isSolving) {
+        sizeSelector.setEnabled(!isSolving); // Disable selector while solving
+    }
+
+    public boolean isSolving() {
+        return !sizeSelector.isEnabled(); // If disabled, it means solving is in progress
     }
 }
