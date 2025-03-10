@@ -45,6 +45,7 @@ public class TrominoController {
 
         public void actionPerformed(ActionEvent e) {
             view.getBoardPanel().updateBoard(new int[(int) view.getSizeSelector().getSelectedItem()][(int) view.getSizeSelector().getSelectedItem()]);
+            view.getBoardPanel().clearBoard();
         }
     }
 }
