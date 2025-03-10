@@ -28,6 +28,7 @@ public class TrominoView extends JFrame {
         startButton = new JButton("Solve");
         clearButton = new JButton("Clear");
         stopButton = new JButton("Stop");
+        stopButton.setEnabled(false);
 
         speedSlider = new JSlider(0, 50, 5); // Min: 0s, Max: 1s, Default: 0.1s
         speedSlider.setMajorTickSpacing(25);
@@ -101,6 +102,8 @@ public class TrominoView extends JFrame {
     public void setSolving(boolean isSolving) {
         sizeSelector.setEnabled(!isSolving);
         startButton.setEnabled(!isSolving);
+        clearButton.setEnabled(!isSolving);
+        stopButton.setEnabled(isSolving);
     }
 
     public boolean isSolving() {
