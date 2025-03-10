@@ -22,9 +22,16 @@ public class TrominoPanel extends JPanel {
                 if (solvingStarted) {
                     return; // Prevent changes after solving
                 }
-                int tileSize = getWidth() / board.length;
+                int panelSize = Math.min(getWidth(), getHeight()); // Ensure square fit
+                int tileSize = panelSize / board.length; // Compute dynamic tile size
+
                 int x = e.getY() / tileSize;
                 int y = e.getX() / tileSize;
+
+                // Prevent out-of-bounds clicks
+                if (x >= board.length || y >= board.length) {
+                    return;
+                }
 
                 // Allow changing the missing tile until solving starts
                 if (tileSelected) {
@@ -66,14 +73,15 @@ public class TrominoPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int tileSize = getWidth() / board.length;
+        int panelSize = Math.min(getWidth(), getHeight()); // Square board fit
+        int tileSize = panelSize / board.length; // Compute correct tile size
 
         // Step 1: Draw the initial grid with black borders
         if (!solvingStarted) {
             g.setColor(Color.BLACK);
             for (int i = 0; i <= board.length; i++) {
-                g.drawLine(0, i * tileSize, getWidth(), i * tileSize); // Horizontal lines
-                g.drawLine(i * tileSize, 0, i * tileSize, getHeight()); // Vertical lines
+                g.drawLine(0, i * tileSize, board.length * tileSize, i * tileSize); // Horizontal lines
+                g.drawLine(i * tileSize, 0, i * tileSize, board.length * tileSize); // Vertical lines
             }
         }
 
