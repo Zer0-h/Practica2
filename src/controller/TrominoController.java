@@ -2,13 +2,12 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import model.TrominoModel;
 import view.TrominoView;
 
 public class TrominoController {
 
     private TrominoView view;
-    private TrominoModel model;
+    private TrominoSolver solver;
 
     public TrominoController(TrominoView view) {
         this.view = view;
@@ -29,12 +28,9 @@ public class TrominoController {
                 return;
             }
 
-            model = new TrominoModel(size, fixedX, fixedY, view.getBoardPanel(), view);
+            solver = new TrominoSolver(size, fixedX, fixedY, view.getBoardPanel(), view);
             view.setSolving(true);
-            new Thread(() -> {
-                model.solveTromino();
-                view.setSolving(false);
-            }).start();
+            solver.start();
         }
     }
 
@@ -49,8 +45,8 @@ public class TrominoController {
     class StopButtonListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (model != null) {
-                model.stopTromino();
+            if (solver != null) {
+                solver.stopSolver();
                 view.setSolving(false);
             }
         }
