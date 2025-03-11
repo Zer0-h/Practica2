@@ -48,7 +48,7 @@ public class TrominoModel {
     }
 
     public void solveTromino() {
-        System.out.println("Estimated time: " + estimateExecutionTime() + " seconds.");
+        mainView.setEstimatedTime(estimateExecutionTime()); // Show estimated time
         isStopped = false;
         long startTime = System.currentTimeMillis();
         tileRec(boardSize, 0, 0, fixedX, fixedY);
@@ -57,7 +57,8 @@ public class TrominoModel {
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
         CM = (elapsedTime * 1.0) / Math.pow(4, Math.log(boardSize) / Math.log(2));
-        System.out.println("Actual execution time: " + (elapsedTime / 1000.0) + " seconds.");
+        // Update execution time in UI
+        mainView.setActualTime(elapsedTime / 1000.0);
     }
 
     private void tileRec(int size, int topX, int topY, int holeX, int holeY) {
