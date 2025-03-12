@@ -1,63 +1,38 @@
 package controller;
 
-import java.awt.Color;
-import javax.swing.SwingUtilities;
-import view.TrominoPanel;
-import view.TrominoView;
+import main.TrominoMain;
+import model.Notificacio;
+import model.Notificar;
+import model.TrominoModel;
 
 /**
- * Handles the recursive Tromino Tiling solution in a separate thread.
+ *
+ * @author tonitorres
  */
-public class TrominoSolver extends Thread {
+public class TrominoSolver extends Thread implements Notificar {
 
-    private int[][] board;
-    private int boardSize;
-    private int fixedX, fixedY;
-    private int currentNum;
-    private TrominoPanel view;
-    private TrominoView mainView;
     private volatile boolean isStopped = false;
-    private static double CM = 1.0; // Constant for execution time estimation
+    private final TrominoMain principal;
+    private final TrominoModel model;
 
-    public TrominoSolver(int size, int fixedX, int fixedY, TrominoPanel view, TrominoView mainView) {
-        int actualSize = 1;
-        while (actualSize < size) {
-            actualSize *= 2;
-        }
-        this.boardSize = actualSize;
-        this.fixedX = fixedX;
-        this.fixedY = fixedY;
-        this.board = new int[boardSize][boardSize];
-        this.currentNum = 1;
-        this.view = view;
-        this.mainView = mainView;
-
-        // Initialize board with all empty tiles
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                board[i][j] = 0;
-            }
-        }
-        board[fixedX][fixedY] = -1;
+    public TrominoSolver(TrominoMain p) {
+        principal = p;
+        model = p.getModel();
     }
 
     @Override
     public void run() {
-        mainView.setEstimatedTime(estimateExecutionTime()); // Display estimated time
         isStopped = false;
+
         long startTime = System.currentTimeMillis();
 
-        tileRec(boardSize, 0, 0, fixedX, fixedY);
-
-        if (!isStopped) {
-            mainView.setSolving(false);
-        }
+        tileRec(model.getBoardSize(), 0, 0, model.getInitialEmptySquareX(), model.getInitialEmptySquareY());
 
         long elapsedTime = System.currentTimeMillis() - startTime;
-        CM = (elapsedTime * 1.0) / Math.pow(4, Math.log(boardSize) / Math.log(2));
+        model.setTrominoConstant(elapsedTime);
 
-        // Update actual execution time in UI
-        mainView.setActualTime(elapsedTime / 1000.0);
+        model.setLastExecutionTime(elapsedTime / 1000.0);
+        principal.notificar(Notificacio.FINALITZA);
     }
 
     private void tileRec(int size, int topX, int topY, int holeX, int holeY) {
@@ -68,12 +43,12 @@ public class TrominoSolver extends Thread {
         if (size == 2) {
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
-                    if (board[topX + i][topY + j] == 0) {
-                        board[topX + i][topY + j] = currentNum;
+                    if (model.isBoardSpaceEmpty(topX + i, topY + j)) {
+                        model.setTrominoToBoard(topX + i, topY + j);
                     }
                 }
             }
-            currentNum++;
+            model.increaseCurrentTromino();
             updateView();
             sleep();
             return;
@@ -88,19 +63,19 @@ public class TrominoSolver extends Thread {
         boolean inBottomRight = holeX >= topX + size / 2 && holeY >= topY + size / 2;
 
         if (!inUpperLeft) {
-            board[centerX][centerY] = currentNum;
+            model.setTrominoToBoard(centerX, centerY);
         }
         if (!inUpperRight) {
-            board[centerX][centerY + 1] = currentNum;
+            model.setTrominoToBoard(centerX, centerY + 1);
         }
         if (!inBottomLeft) {
-            board[centerX + 1][centerY] = currentNum;
+            model.setTrominoToBoard(centerX + 1, centerY);
         }
         if (!inBottomRight) {
-            board[centerX + 1][centerY + 1] = currentNum;
+            model.setTrominoToBoard(centerX + 1, centerY + 1);
         }
 
-        currentNum++;
+        model.increaseCurrentTromino();
         updateView();
         sleep();
 
@@ -112,11 +87,10 @@ public class TrominoSolver extends Thread {
 
     public void stopSolver() {
         isStopped = true;
-        mainView.setSolving(false);
     }
 
     private void updateView() {
-        SwingUtilities.invokeLater(() -> view.updateBoard(board));
+        principal.notificar(Notificacio.PINTAR);
     }
 
     private void sleep() {
@@ -127,18 +101,12 @@ public class TrominoSolver extends Thread {
         }
     }
 
-    public double estimateExecutionTime() {
-        long estimatedCalls = (long) Math.pow(4, Math.log(boardSize) / Math.log(2));
-        return (CM * estimatedCalls) / 1000.0; // Convert to seconds
-    }
-
-    public static Color getColorForTromino(int id) {
-        if (id <= 0) {
-            return Color.WHITE;
+    @Override
+    public void notificar(Notificacio n) {
+        switch (n) {
+            case Notificacio.ATURAR -> {
+                stopSolver();
+            }
         }
-        return new Color[]{
-            Color.RED, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.GREEN,
-            Color.ORANGE, Color.CYAN, Color.PINK
-        }[(id - 1) % 8];
     }
 }

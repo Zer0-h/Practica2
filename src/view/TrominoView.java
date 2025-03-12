@@ -2,18 +2,28 @@ package view;
 
 import java.awt.*;
 import javax.swing.*;
+import main.TrominoMain;
+import model.Notificacio;
+import model.Notificar;
+import model.TrominoModel;
 
-public class TrominoView extends JFrame {
+/**
+ *
+ * @author tonitorres
+ */
+public class TrominoView extends JFrame implements Notificar {
 
     private static final Integer[] BOARD_SIZES = {4, 8, 16, 32, 64, 128};
 
-    private JButton startButton, clearButton, stopButton;
+    private final JButton startButton, clearButton, stopButton;
     private JComboBox<Integer> sizeSelector;
-    private JLabel timeLabel; // Added time label
+    private final JLabel timeLabel; // Added time label
     private TrominoPanel boardPanel;
     private double estimatedTime = 0.0; // Store estimated time for persistence
+    private final TrominoMain principal;
 
-    public TrominoView() {
+    public TrominoView(TrominoMain p) {
+        principal = p;
         setTitle("Tromino Tiling");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -34,7 +44,7 @@ public class TrominoView extends JFrame {
 
         add(controlPanel, BorderLayout.NORTH);
 
-        boardPanel = new TrominoPanel(BOARD_SIZES[0]);
+        boardPanel = new TrominoPanel(BOARD_SIZES[0], principal);
         add(boardPanel, BorderLayout.CENTER);
 
         // **New Time Display Panel**
@@ -50,6 +60,23 @@ public class TrominoView extends JFrame {
                 boardPanel.updateBoard(new int[newSize][newSize]);
                 boardPanel.clearBoard();
             }
+        });
+
+        startButton.addActionListener(e -> {
+            principal.notificar(Notificacio.ARRANCAR);
+            setSolving(true);
+            TrominoModel model = principal.getModel();
+            setEstimatedTime(model.estimateTrominoExecutionTime());
+        });
+
+        clearButton.addActionListener(e -> {
+            getBoardPanel().clearBoard();
+            setSolving(false);
+        });
+
+        stopButton.addActionListener(e -> {
+            principal.notificar(Notificacio.ATURAR);
+            setSolving(false);
         });
 
         pack();
@@ -102,6 +129,25 @@ public class TrominoView extends JFrame {
             timeLabel.setText(String.format("Estimated Time: %.2f s | Actual Time: -- s", estimatedTime));
         } else {
             timeLabel.setText(String.format("Estimated Time: %.2f s | Actual Time: %.2f s", estimatedTime, actualTime));
+        }
+    }
+
+    @Override
+    public void notificar(Notificacio n) {
+        switch (n) {
+            case Notificacio.PINTAR -> {
+                TrominoModel model = principal.getModel();
+                this.boardPanel.updateBoard(model.getBoard());
+            }
+            case Notificacio.FINALITZA -> {
+                TrominoModel model = principal.getModel();
+
+                setActualTime(model.getLastExecutionTime());
+                setSolving(false);
+            }
+
+            default -> {
+            }
         }
     }
 }

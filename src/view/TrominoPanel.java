@@ -2,17 +2,23 @@ package view;
 
 import java.awt.*;
 import javax.swing.*;
-import model.TrominoModel;
+import main.TrominoMain;
 
+/**
+ *
+ * @author tonitorres
+ */
 public class TrominoPanel extends JPanel {
 
     private int[][] board;
     private int fixedX = -1, fixedY = -1;
     private boolean tileSelected = false;
     private boolean solvingStarted = false;
+    private final TrominoMain principal;
 
-    public TrominoPanel(int size) {
-        setPreferredSize(new Dimension(768, 768)); // Multiplo de 2 
+    public TrominoPanel(int size, TrominoMain p) {
+        principal = p;
+        setPreferredSize(new Dimension(768, 768)); // Multiplo de 2
         board = new int[size][size];
 
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -91,7 +97,7 @@ public class TrominoPanel extends JPanel {
                     g.setColor(Color.BLACK);
                     g.fillRect(x, y, tileSize, tileSize);
                 } else if (board[i][j] > 0) {
-                    g.setColor(TrominoModel.getColorForTromino(board[i][j]));
+                    g.setColor(principal.getModel().getColorForTromino(i, j));
                     g.fillRect(x, y, tileSize, tileSize);
                 }
             }
