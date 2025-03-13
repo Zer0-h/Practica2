@@ -8,139 +8,129 @@ import java.awt.Color;
  */
 public class Model {
 
-    private Integer[] boardSizes;
-    private int[][] board;
-    private int boardSize;
-    private double trominoConstant;
-    private double lastExecutionTime;
-    private int currentNum;
-    private int initialEmptySquareX;
-    private int initialEmptySquareY;
-    private boolean enproces;
+    private Integer[] midesSeleccionables;
+    private int[][] tauler;
+    private double constantTromino;
+    private double tempsExecucio;
+    private int numTromino;
+    private int foratX;
+    private int foratY;
+    private boolean enProces;
 
     public Model() {
-        trominoConstant = 1.0;
-        boardSizes = new Integer[]{4, 8, 16, 32, 64, 128};
-        enproces = false;
+        constantTromino = 1.0;
+        midesSeleccionables = new Integer[]{4, 8, 16, 32, 64, 128};
+        enProces = false;
     }
 
-    public Integer[] getSelectableBoardSizes() {
-        return boardSizes;
+    public Integer[] getMidesSeleccionables() {
+        return midesSeleccionables;
     }
 
     public int getPosicioForatX() {
-        return initialEmptySquareX;
-    }
-
-    public void setInitialEmptySquare(int x, int y) {
-        initialEmptySquareX = x;
-        initialEmptySquareY = y;
-
-        board[this.initialEmptySquareX][this.initialEmptySquareY] = -1;
+        return foratX;
     }
 
     public int getPosicioForatY() {
-        return initialEmptySquareY;
+        return foratY;
     }
 
-    public int[][] getBoard() {
-        return board;
+    public void colocaForat(int x, int y) {
+        foratX = x;
+        foratY = y;
+
+        tauler[this.foratX][this.foratY] = -1;
     }
 
-    public int getBoardLength() {
-        return board.length;
+    public void llevaForatAnterior() {
+        tauler[foratX][foratY] = 0;
+    }
+
+    public int tamanyTauler() {
+        return tauler.length;
     }
 
     public boolean seleccionatEspaiBuit() {
-        return initialEmptySquareX != -1 && initialEmptySquareY != -1;
+        return foratX != -1 && foratY != -1;
     }
 
     public void setTempsExecucio(double value) {
-        lastExecutionTime = value;
+        tempsExecucio = value;
     }
 
-    public double getLastExecutionTime() {
-        return lastExecutionTime;
+    public double getTempsExecucio() {
+        return tempsExecucio;
     }
 
     public void setConstantTromino(double elapsedTime) {
-        trominoConstant = (elapsedTime * 1.0) / Math.pow(4, Math.log(boardSize) / Math.log(2));
+        constantTromino = (elapsedTime * 1.0) / Math.pow(4, Math.log(tauler.length) / Math.log(2));
     }
 
-    public double estimateTrominoExecutionTime() {
-        long estimatedCalls = (long) Math.pow(4, Math.log(boardSize) / Math.log(2));
-        return (trominoConstant * estimatedCalls) / 1000.0;
+    public double estimaTempsExecucio() {
+        long estimatedCalls = (long) Math.pow(4, Math.log(tauler.length) / Math.log(2));
+        return (constantTromino * estimatedCalls) / 1000.0;
     }
 
     public void construirTauler(int size) {
-        this.boardSize = size;
-        this.board = new int[boardSize][boardSize];
-        this.currentNum = 1;
+        this.tauler = new int[size][size];
+        this.numTromino = 1;
 
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                board[i][j] = 0;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                tauler[i][j] = 0;
             }
         }
 
-        initialEmptySquareX = -1;
-        initialEmptySquareY = -1;
+        foratX = -1;
+        foratY = -1;
     }
 
-    public void setEnproces(boolean value) {
-        enproces = value;
+    public void setEnProces(boolean value) {
+        enProces = value;
     }
 
-    public boolean getEnproces() {
-        return enproces;
+    public boolean getEnProces() {
+        return enProces;
     }
 
-    public int getBoardSize() {
-        return boardSize;
+    public boolean noTrominoColocat(int x, int y) {
+        return tauler[x][y] == 0;
     }
 
-    public void resetPreviousEmptySpace() {
-        board[initialEmptySquareX][initialEmptySquareY] = 0;
+    public boolean esEspaiAmbForat(int x, int y) {
+        return tauler[x][y] == -1;
     }
 
-    public boolean isBoardSpaceEmpty(int x, int y) {
-        return board[x][y] == 0;
+    public boolean esEspaiAmbTromino(int x, int y) {
+        return tauler[x][y] > 0;
     }
 
-    public boolean isBoardSpaceVoid(int x, int y) {
-        return board[x][y] == -1;
+    public boolean esVoraSuperiorTromino(int x, int y) {
+        return x == 0 || tauler[x - 1][y] != tauler[x][y];
     }
 
-    public boolean isBoardSpaceWithTromino(int x, int y) {
-        return board[x][y] > 0;
+    public boolean esVoraInferiorTromino(int x, int y) {
+        return x == tauler.length - 1 || tauler[x + 1][y] != tauler[x][y];
     }
 
-    public boolean isTrominoPieceTopEdge(int x, int y) {
-        return x == 0 || board[x - 1][y] != board[x][y];
+    public boolean esVoraEsquerraTromino(int x, int y) {
+        return y == 0 || tauler[x][y - 1] != tauler[x][y];
     }
 
-    public boolean isTrominoPieceBottomEdge(int x, int y) {
-        return x == board.length - 1 || board[x + 1][y] != board[x][y];
+    public boolean esVoraDretaTromino(int x, int y) {
+        return y == tauler[x].length - 1 || tauler[x][y + 1] != tauler[x][y];
     }
 
-    public boolean isTrominoPieceLeftEdge(int x, int y) {
-        return y == 0 || board[x][y - 1] != board[x][y];
+    public void colocaTromino(int x, int y) {
+        tauler[x][y] = numTromino;
     }
 
-    public boolean isTrominoPieceRightEdge(int x, int y) {
-        return y == board[x].length - 1 || board[x][y + 1] != board[x][y];
+    public void incrementaTrominoActual() {
+        numTromino++;
     }
 
-    public void setTrominoToBoard(int x, int y) {
-        board[x][y] = currentNum;
-    }
-
-    public void increaseCurrentTromino() {
-        currentNum++;
-    }
-
-    public Color getColorForTromino(int x, int y) {
-        int trominoNumber = board[x][y];
+    public Color getColorPerTromino(int x, int y) {
+        int trominoNumber = tauler[x][y];
 
         if (trominoNumber <= 0) {
             return Color.WHITE;

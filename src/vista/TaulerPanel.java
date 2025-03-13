@@ -26,25 +26,25 @@ public class TaulerPanel extends JPanel {
         addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (model.getEnproces()) {
+                if (model.getEnProces()) {
                     return;
                 }
 
-                int panelSize = Math.min(getWidth(), getHeight());
-                int tileSize = panelSize / model.getBoardLength();
+                int midaPanel = Math.min(getWidth(), getHeight());
+                int midaCasella = midaPanel / model.tamanyTauler();
 
-                int x = e.getY() / tileSize;
-                int y = e.getX() / tileSize;
+                int x = e.getY() / midaCasella;
+                int y = e.getX() / midaCasella;
 
-                if (x >= model.getBoardLength() || y >= model.getBoardLength()) {
+                if (x >= model.tamanyTauler() || y >= model.tamanyTauler()) {
                     return;
                 }
 
                 if (model.seleccionatEspaiBuit()) {
-                    model.resetPreviousEmptySpace();
+                    model.llevaForatAnterior();
                 }
 
-                model.setInitialEmptySquare(x, y);
+                model.colocaForat(x, y);
                 principal.notificar(Notificacio.SELECCIONA);
                 repaint();
             }
@@ -52,62 +52,62 @@ public class TaulerPanel extends JPanel {
     }
 
     public void pintar() {
-        repaint(); // Use repaint() instead of directly calling paintComponent()
+        repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // Clears the panel properly before redrawing
+        super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int panelSize = Math.min(getWidth(), getHeight());
-        int tileSize = panelSize / model.getBoardLength();
+        int midaPanel = Math.min(getWidth(), getHeight());
+        int midaCasella = midaPanel / model.tamanyTauler();
 
         // Draw grid lines
         g2.setColor(Color.BLACK);
-        for (int i = 0; i <= model.getBoardLength(); i++) {
-            g2.drawLine(0, i * tileSize, model.getBoardLength() * tileSize, i * tileSize);
-            g2.drawLine(i * tileSize, 0, i * tileSize, model.getBoardLength() * tileSize);
+        for (int i = 0; i <= model.tamanyTauler(); i++) {
+            g2.drawLine(0, i * midaCasella, model.tamanyTauler() * midaCasella, i * midaCasella);
+            g2.drawLine(i * midaCasella, 0, i * midaCasella, model.tamanyTauler() * midaCasella);
         }
 
         // Fill board tiles
-        for (int i = 0; i < model.getBoardLength(); i++) {
-            for (int j = 0; j < model.getBoardLength(); j++) {
-                int x = j * tileSize;
-                int y = i * tileSize;
+        for (int i = 0; i < model.tamanyTauler(); i++) {
+            for (int j = 0; j < model.tamanyTauler(); j++) {
+                int x = j * midaCasella;
+                int y = i * midaCasella;
 
-                if (model.isBoardSpaceVoid(i, j)) {
+                if (model.esEspaiAmbForat(i, j)) {
                     g2.setColor(Color.BLACK);
-                    g2.fillRect(x, y, tileSize, tileSize);
-                } else if (model.isBoardSpaceWithTromino(i, j)) {
-                    g2.setColor(principal.getModel().getColorForTromino(i, j));
-                    g2.fillRect(x, y, tileSize, tileSize);
+                    g2.fillRect(x, y, midaCasella, midaCasella);
+                } else if (model.esEspaiAmbTromino(i, j)) {
+                    g2.setColor(principal.getModel().getColorPerTromino(i, j));
+                    g2.fillRect(x, y, midaCasella, midaCasella);
                 }
             }
         }
 
         // Draw borders around each tromino piece
         g2.setColor(Color.BLACK);
-        for (int i = 0; i < model.getBoardLength(); i++) {
-            for (int j = 0; j < model.getBoardLength(); j++) {
-                if (model.isBoardSpaceWithTromino(i, j)) {
-                    int x = j * tileSize;
-                    int y = i * tileSize;
+        for (int i = 0; i < model.tamanyTauler(); i++) {
+            for (int j = 0; j < model.tamanyTauler(); j++) {
+                if (model.esEspaiAmbTromino(i, j)) {
+                    int x = j * midaCasella;
+                    int y = i * midaCasella;
 
                     // Draw only external edges of the tromino (avoid internal borders)
-                    if (model.isTrominoPieceTopEdge(i, j)) {
-                        g2.drawLine(x, y, x + tileSize, y);
+                    if (model.esVoraSuperiorTromino(i, j)) {
+                        g2.drawLine(x, y, x + midaCasella, y);
                     }
-                    if (model.isTrominoPieceLeftEdge(i, j)) {
-                        g2.drawLine(x, y, x, y + tileSize);
+                    if (model.esVoraEsquerraTromino(i, j)) {
+                        g2.drawLine(x, y, x, y + midaCasella);
                     }
-                    if (model.isTrominoPieceBottomEdge(i, j)) {
-                        g2.drawLine(x, y + tileSize, x + tileSize, y + tileSize);
+                    if (model.esVoraInferiorTromino(i, j)) {
+                        g2.drawLine(x, y + midaCasella, x + midaCasella, y + midaCasella);
                     }
-                    if (model.isTrominoPieceRightEdge(i, j)) {
-                        g2.drawLine(x + tileSize, y, x + tileSize, y + tileSize);
+                    if (model.esVoraDretaTromino(i, j)) {
+                        g2.drawLine(x + midaCasella, y, x + midaCasella, y + midaCasella);
                     }
                 }
             }

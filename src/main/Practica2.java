@@ -23,7 +23,7 @@ public class Practica2 implements Notificar {
 
     public void inici() {
         model = new Model();
-        model.construirTauler(model.getSelectableBoardSizes()[0]);
+        model.construirTauler(model.getMidesSeleccionables()[0]);
         vista = new Vista(this);
     }
 
@@ -35,19 +35,19 @@ public class Practica2 implements Notificar {
     public void notificar(Notificacio n) {
         switch (n) {
             case Notificacio.ARRANCAR -> {
-                model.setEnproces(true);
+                model.setEnProces(true);
                 solver = new TrominoRecursiu(this);
                 solver.start();
             }
             case Notificacio.ATURAR -> {
-                model.setEnproces(false);
+                model.setEnProces(false);
                 solver.atura();
             }
             case Notificacio.PINTAR -> {
                 vista.notificar(n);
             }
             case Notificacio.FINALITZA -> {
-                model.setEnproces(false);
+                model.setEnProces(false);
                 vista.notificar(n);
             }
             case Notificacio.SELECCIONA -> {

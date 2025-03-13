@@ -13,83 +13,80 @@ import model.Notificar;
  */
 public class Vista extends JFrame implements Notificar {
 
-    private final JButton startButton, clearButton, stopButton;
-    private JComboBox<Integer> sizeSelector;
-    private final JLabel timeLabel; // Added time label
-    private TaulerPanel boardPanel;
-    private double estimatedTime = 0.0; // Store estimated time for persistence
+    private final JButton iniciarButton, netejarButton, aturarButton;
+    private JComboBox<Integer> selectorMida;
+    private final JLabel tempsLabel;
+    private TaulerPanel taulerPanel;
+    private double tempsEstimat = 0.0;
     private final Practica2 principal;
 
     public Vista(Practica2 p) {
         principal = p;
-        setTitle("Tromino Tiling");
+        setTitle("Pràctica 2 - Backtracking");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Control Panel
-        JPanel controlPanel = new JPanel();
-        sizeSelector = new JComboBox<>(principal.getModel().getSelectableBoardSizes());
-        startButton = new JButton("Solve");
-        clearButton = new JButton("Clear");
-        stopButton = new JButton("Stop");
+        JPanel panelControl = new JPanel();
+        selectorMida = new JComboBox<>(principal.getModel().getMidesSeleccionables());
+        iniciarButton = new JButton("Iniciar");
+        netejarButton = new JButton("Neteja");
+        aturarButton = new JButton("Aturar");
 
-        startButton.setEnabled(false);
-        clearButton.setEnabled(false);
-        stopButton.setEnabled(false);
+        iniciarButton.setEnabled(false);
+        netejarButton.setEnabled(false);
+        aturarButton.setEnabled(false);
 
-        controlPanel.add(new JLabel("Board Size:"));
-        controlPanel.add(sizeSelector);
-        controlPanel.add(startButton);
-        controlPanel.add(clearButton);
-        controlPanel.add(stopButton);
+        panelControl.add(new JLabel("Mida del tauler:"));
+        panelControl.add(selectorMida);
+        panelControl.add(iniciarButton);
+        panelControl.add(netejarButton);
+        panelControl.add(aturarButton);
 
-        add(controlPanel, BorderLayout.NORTH);
+        add(panelControl, BorderLayout.NORTH);
 
-        boardPanel = new TaulerPanel(principal);
-        add(boardPanel, BorderLayout.CENTER);
+        taulerPanel = new TaulerPanel(principal);
+        add(taulerPanel, BorderLayout.CENTER);
 
-        // **New Time Display Panel**
-        JPanel timePanel = new JPanel();
-        timeLabel = new JLabel("Estimated Time: -- s | Actual Time: -- s"); // Default text
-        timePanel.add(timeLabel);
-        add(timePanel, BorderLayout.SOUTH); // Add to bottom of the window
+        JPanel panelTemps = new JPanel();
+        tempsLabel = new JLabel("Temps Estimat: -- s | Temps Real: -- s"); // Text per defecte
 
-        // Listener to update board when size changes
-        sizeSelector.addActionListener(e -> {
+        panelTemps.add(tempsLabel);
+        add(panelTemps, BorderLayout.SOUTH);
+
+        selectorMida.addActionListener(e -> {
             Model model = principal.getModel();
-            if (!model.getEnproces()) { // Prevent changing size while solving
-                int newSize = (int) sizeSelector.getSelectedItem();
-
-                principal.getModel().construirTauler(newSize);
-                boardPanel.pintar();
+            if (!model.getEnProces()) {
+                principal.getModel().construirTauler((int) selectorMida.getSelectedItem());
+                taulerPanel.pintar();
             }
         });
 
-        startButton.addActionListener(e -> {
+        iniciarButton.addActionListener(e -> {
             principal.notificar(Notificacio.ARRANCAR);
 
-            sizeSelector.setEnabled(false);
-            startButton.setEnabled(false);
-            clearButton.setEnabled(false);
-            stopButton.setEnabled(true);
+            selectorMida.setEnabled(false);
+            iniciarButton.setEnabled(false);
+            netejarButton.setEnabled(false);
+            aturarButton.setEnabled(true);
 
             Model model = principal.getModel();
-            setEstimatedTime(model.estimateTrominoExecutionTime());
+            setTempsEstimat(model.estimaTempsExecucio());
         });
 
-        clearButton.addActionListener(e -> {
-            principal.getModel().construirTauler((int) sizeSelector.getSelectedItem());
-            boardPanel.pintar();
+        netejarButton.addActionListener(e -> {
+            principal.getModel().construirTauler((int) selectorMida.getSelectedItem());
+            taulerPanel.pintar();
 
-            clearButton.setEnabled(false);
+            netejarButton.setEnabled(false);
         });
 
-        stopButton.addActionListener(e -> {
+        aturarButton.addActionListener(e -> {
             principal.notificar(Notificacio.ATURAR);
 
-            sizeSelector.setEnabled(true);
-            clearButton.setEnabled(true);
-            stopButton.setEnabled(false);
+            selectorMida.setEnabled(true);
+            netejarButton.setEnabled(true);
+            aturarButton.setEnabled(false);
         });
 
         pack();
@@ -97,36 +94,20 @@ public class Vista extends JFrame implements Notificar {
         setVisible(true);
     }
 
-    public JButton getStartButton() {
-        return startButton;
+    public void setTempsEstimat(double tempsEstimat) {
+        this.tempsEstimat = tempsEstimat;
+        actualitzaEtiquetaTemps(null);
     }
 
-    public JButton getClearButton() {
-        return clearButton;
+    public void setTempsReal(double tempsReal) {
+        actualitzaEtiquetaTemps(tempsReal);
     }
 
-    public JButton getStopButton() {
-        return stopButton;
-    }
-
-    public TaulerPanel getBoardPanel() {
-        return boardPanel;
-    }
-
-    public void setEstimatedTime(double estimatedTime) {
-        this.estimatedTime = estimatedTime; // Store it for later comparison
-        updateTimeLabel(null);
-    }
-
-    public void setActualTime(double actualTime) {
-        updateTimeLabel(actualTime);
-    }
-
-    private void updateTimeLabel(Double actualTime) {
-        if (actualTime == null) {
-            timeLabel.setText(String.format("Estimated Time: %.2f s | Actual Time: -- s", estimatedTime));
+    private void actualitzaEtiquetaTemps(Double tempsReal) {
+        if (tempsReal == null) {
+            tempsLabel.setText(String.format("Temps Estimat: %.2f s | Temps Real: -- s", tempsEstimat));
         } else {
-            timeLabel.setText(String.format("Estimated Time: %.2f s | Actual Time: %.2f s", estimatedTime, actualTime));
+            tempsLabel.setText(String.format("Temps Estimat: %.2f s | Temps Real: %.2f s", tempsEstimat, tempsReal));
         }
     }
 
@@ -134,20 +115,18 @@ public class Vista extends JFrame implements Notificar {
     public void notificar(Notificacio n) {
         switch (n) {
             case Notificacio.PINTAR -> {
-                boardPanel.pintar();
+                taulerPanel.pintar();
             }
             case Notificacio.FINALITZA -> {
-                setActualTime(principal.getModel().getLastExecutionTime());
+                setTempsReal(principal.getModel().getTempsExecucio());
 
-                sizeSelector.setEnabled(true);
-                clearButton.setEnabled(true);
-                stopButton.setEnabled(false);
+                selectorMida.setEnabled(true);
+                netejarButton.setEnabled(true);
+                aturarButton.setEnabled(false);
             }
             case Notificacio.SELECCIONA -> {
-                startButton.setEnabled(true);
-                clearButton.setEnabled(true);
-            }
-            default -> {
+                iniciarButton.setEnabled(true);
+                netejarButton.setEnabled(true);
             }
         }
     }

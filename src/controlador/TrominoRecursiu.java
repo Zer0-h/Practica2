@@ -26,7 +26,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
 
         long inici = System.currentTimeMillis();
 
-        colocaTromino(model.getBoardSize(), 0, 0, model.getPosicioForatX(), model.getPosicioForatY());
+        colocaTromino(model.tamanyTauler(), 0, 0, model.getPosicioForatX(), model.getPosicioForatY());
 
         long tempsTotal = System.currentTimeMillis() - inici;
         model.setConstantTromino(tempsTotal);
@@ -43,12 +43,12 @@ public class TrominoRecursiu extends Thread implements Notificar {
         if (mida == 2) {
             for (int i = 0; i < mida; i++) {
                 for (int j = 0; j < mida; j++) {
-                    if (model.isBoardSpaceEmpty(iniciX + i, iniciY + j)) {
-                        model.setTrominoToBoard(iniciX + i, iniciY + j);
+                    if (model.noTrominoColocat(iniciX + i, iniciY + j)) {
+                        model.colocaTromino(iniciX + i, iniciY + j);
                     }
                 }
             }
-            model.increaseCurrentTromino();
+            model.incrementaTrominoActual();
             actualitzaVista();
             sleep();
             return;
@@ -63,19 +63,19 @@ public class TrominoRecursiu extends Thread implements Notificar {
         boolean abaixDreta = foratX >= iniciX + mida / 2 && foratY >= iniciY + mida / 2;
 
         if (!adaltEsquerra) {
-            model.setTrominoToBoard(centreX, centreY);
+            model.colocaTromino(centreX, centreY);
         }
         if (!adaltDreta) {
-            model.setTrominoToBoard(centreX, centreY + 1);
+            model.colocaTromino(centreX, centreY + 1);
         }
         if (!abaixEsquerra) {
-            model.setTrominoToBoard(centreX + 1, centreY);
+            model.colocaTromino(centreX + 1, centreY);
         }
         if (!abaixDreta) {
-            model.setTrominoToBoard(centreX + 1, centreY + 1);
+            model.colocaTromino(centreX + 1, centreY + 1);
         }
 
-        model.increaseCurrentTromino();
+        model.incrementaTrominoActual();
         actualitzaVista();
         sleep();
 
