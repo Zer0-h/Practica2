@@ -28,7 +28,7 @@ public class Model {
         return boardSizes;
     }
 
-    public int getInitialEmptySquareX() {
+    public int getPosicioForatX() {
         return initialEmptySquareX;
     }
 
@@ -39,7 +39,7 @@ public class Model {
         board[this.initialEmptySquareX][this.initialEmptySquareY] = -1;
     }
 
-    public int getInitialEmptySquareY() {
+    public int getPosicioForatY() {
         return initialEmptySquareY;
     }
 
@@ -55,7 +55,7 @@ public class Model {
         return initialEmptySquareX != -1 && initialEmptySquareY != -1;
     }
 
-    public void setLastExecutionTime(double value) {
+    public void setTempsExecucio(double value) {
         lastExecutionTime = value;
     }
 
@@ -63,7 +63,7 @@ public class Model {
         return lastExecutionTime;
     }
 
-    public void setTrominoConstant(double elapsedTime) {
+    public void setConstantTromino(double elapsedTime) {
         trominoConstant = (elapsedTime * 1.0) / Math.pow(4, Math.log(boardSize) / Math.log(2));
     }
 

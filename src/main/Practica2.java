@@ -17,11 +17,11 @@ public class Practica2 implements Notificar {
     private TrominoRecursiu solver;
 
     public static void main(String[] args) {
-        (new Practica2()).inicio();
+        (new Practica2()).inici();
 
     }
 
-    public void inicio() {
+    public void inici() {
         model = new Model();
         model.construirTauler(model.getSelectableBoardSizes()[0]);
         vista = new Vista(this);
