@@ -115,19 +115,19 @@ public class Model {
         return board[x][y] > 0;
     }
 
-    public boolean isBoardSpaceTopEdge(int x, int y) {
+    public boolean isTrominoPieceTopEdge(int x, int y) {
         return x == 0 || board[x - 1][y] != board[x][y];
     }
 
-    public boolean isBoardSpaceBottomEdge(int x, int y) {
+    public boolean isTrominoPieceBottomEdge(int x, int y) {
         return x == board.length - 1 || board[x + 1][y] != board[x][y];
     }
 
-    public boolean isBoardSpaceLeftEdge(int x, int y) {
+    public boolean isTrominoPieceLeftEdge(int x, int y) {
         return y == 0 || board[x][y - 1] != board[x][y];
     }
 
-    public boolean isBoardSpaceRightEdge(int x, int y) {
+    public boolean isTrominoPieceRightEdge(int x, int y) {
         return y == board[x].length - 1 || board[x][y + 1] != board[x][y];
     }
 

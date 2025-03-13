@@ -97,16 +97,16 @@ public class TaulerPanel extends JPanel {
                     int y = i * tileSize;
 
                     // Draw only external edges of the tromino (avoid internal borders)
-                    if (model.isBoardSpaceTopEdge(i, j)) {
+                    if (model.isTrominoPieceTopEdge(i, j)) {
                         g2.drawLine(x, y, x + tileSize, y);
                     }
-                    if (model.isBoardSpaceLeftEdge(i, j)) {
+                    if (model.isTrominoPieceLeftEdge(i, j)) {
                         g2.drawLine(x, y, x, y + tileSize);
                     }
-                    if (model.isBoardSpaceBottomEdge(i, j)) {
+                    if (model.isTrominoPieceBottomEdge(i, j)) {
                         g2.drawLine(x, y + tileSize, x + tileSize, y + tileSize);
                     }
-                    if (model.isBoardSpaceRightEdge(i, j)) {
+                    if (model.isTrominoPieceRightEdge(i, j)) {
                         g2.drawLine(x + tileSize, y, x + tileSize, y + tileSize);
                     }
                 }
