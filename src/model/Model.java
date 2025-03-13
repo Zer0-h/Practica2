@@ -8,49 +8,49 @@ import java.awt.Color;
  */
 public class Model {
 
-    private Integer[] midesSeleccionables;
+    private final Integer[] midesSeleccionables;
     private int[][] tauler;
     private double constantTromino;
     private double tempsExecucio;
     private int numTromino;
     private int foratX;
     private int foratY;
-    private boolean enProces;
+    private boolean enExecucio;
 
     public Model() {
         constantTromino = 1.0;
         midesSeleccionables = new Integer[]{4, 8, 16, 32, 64, 128};
-        enProces = false;
+        enExecucio = false;
     }
 
     public Integer[] getMidesSeleccionables() {
         return midesSeleccionables;
     }
 
-    public int getPosicioForatX() {
+    public int getForatX() {
         return foratX;
     }
 
-    public int getPosicioForatY() {
+    public int getForatY() {
         return foratY;
     }
 
-    public void colocaForat(int x, int y) {
+    public void assignarForat(int x, int y) {
         foratX = x;
         foratY = y;
 
         tauler[this.foratX][this.foratY] = -1;
     }
 
-    public void llevaForatAnterior() {
+    public void netejarForat() {
         tauler[foratX][foratY] = 0;
     }
 
-    public int tamanyTauler() {
+    public int getMidaTauler() {
         return tauler.length;
     }
 
-    public boolean seleccionatEspaiBuit() {
+    public boolean hiHaForatSeleccionat() {
         return foratX != -1 && foratY != -1;
     }
 
@@ -62,7 +62,7 @@ public class Model {
         return tempsExecucio;
     }
 
-    public void setConstantTromino(double elapsedTime) {
+    public void calculaConstantTromino(double elapsedTime) {
         constantTromino = (elapsedTime * 1.0) / Math.pow(4, Math.log(tauler.length) / Math.log(2));
     }
 
@@ -71,7 +71,7 @@ public class Model {
         return (constantTromino * estimatedCalls) / 1000.0;
     }
 
-    public void construirTauler(int size) {
+    public void inicialitzaTauler(int size) {
         this.tauler = new int[size][size];
         this.numTromino = 1;
 
@@ -85,23 +85,23 @@ public class Model {
         foratY = -1;
     }
 
-    public void setEnProces(boolean value) {
-        enProces = value;
+    public void setEnExecucio(boolean value) {
+        enExecucio = value;
     }
 
-    public boolean getEnProces() {
-        return enProces;
+    public boolean getEnExecucio() {
+        return enExecucio;
     }
 
-    public boolean noTrominoColocat(int x, int y) {
+    public boolean esCasellaBuida(int x, int y) {
         return tauler[x][y] == 0;
     }
 
-    public boolean esEspaiAmbForat(int x, int y) {
+    public boolean esCasellaForat(int x, int y) {
         return tauler[x][y] == -1;
     }
 
-    public boolean esEspaiAmbTromino(int x, int y) {
+    public boolean esCasellaTromino(int x, int y) {
         return tauler[x][y] > 0;
     }
 
@@ -130,14 +130,14 @@ public class Model {
     }
 
     public Color getColorPerTromino(int x, int y) {
-        int trominoNumber = tauler[x][y];
+        int trominoNum = tauler[x][y];
 
-        if (trominoNumber <= 0) {
+        if (trominoNum <= 0) {
             return Color.WHITE;
         }
         return new Color[]{
             Color.RED, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.GREEN,
             Color.ORANGE, Color.CYAN, Color.PINK
-        }[(trominoNumber - 1) % 8];
+        }[(trominoNum - 1) % 8];
     }
 }

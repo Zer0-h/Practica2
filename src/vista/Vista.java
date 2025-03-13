@@ -56,8 +56,8 @@ public class Vista extends JFrame implements Notificar {
 
         selectorMida.addActionListener(e -> {
             Model model = principal.getModel();
-            if (!model.getEnProces()) {
-                principal.getModel().construirTauler((int) selectorMida.getSelectedItem());
+            if (!model.getEnExecucio()) {
+                principal.getModel().inicialitzaTauler((int) selectorMida.getSelectedItem());
                 taulerPanel.pintar();
             }
         });
@@ -75,7 +75,7 @@ public class Vista extends JFrame implements Notificar {
         });
 
         netejarButton.addActionListener(e -> {
-            principal.getModel().construirTauler((int) selectorMida.getSelectedItem());
+            principal.getModel().inicialitzaTauler((int) selectorMida.getSelectedItem());
             taulerPanel.pintar();
 
             netejarButton.setEnabled(false);

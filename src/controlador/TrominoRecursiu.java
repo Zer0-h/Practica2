@@ -11,89 +11,87 @@ import model.Notificar;
  */
 public class TrominoRecursiu extends Thread implements Notificar {
 
-    private boolean aturar = false;
+    private boolean aturat = false;
     private final Practica2 principal;
     private final Model model;
 
     public TrominoRecursiu(Practica2 p) {
-        principal = p;
-        model = p.getModel();
+        this.principal = p;
+        this.model = p.getModel();
     }
 
     @Override
     public void run() {
-        aturar = false;
+        aturat = false;
 
-        long inici = System.currentTimeMillis();
+        long iniciTemps = System.currentTimeMillis();
+        resoldreTromino(model.getMidaTauler(), 0, 0, model.getForatX(), model.getForatY());
+        long tempsTotal = System.currentTimeMillis() - iniciTemps;
 
-        colocaTromino(model.tamanyTauler(), 0, 0, model.getPosicioForatX(), model.getPosicioForatY());
-
-        long tempsTotal = System.currentTimeMillis() - inici;
-        model.setConstantTromino(tempsTotal);
-
+        model.calculaConstantTromino(tempsTotal);
         model.setTempsExecucio(tempsTotal / 1000.0);
         principal.notificar(Notificacio.FINALITZA);
     }
 
-    private void colocaTromino(int mida, int iniciX, int iniciY, int foratX, int foratY) {
-        if (aturar) {
+    private void resoldreTromino(int mida, int iniciX, int iniciY, int foratX, int foratY) {
+        if (aturat) {
             return;
         }
 
         if (mida == 2) {
-            for (int i = 0; i < mida; i++) {
-                for (int j = 0; j < mida; j++) {
-                    if (model.noTrominoColocat(iniciX + i, iniciY + j)) {
-                        model.colocaTromino(iniciX + i, iniciY + j);
-                    }
-                }
-            }
-            model.incrementaTrominoActual();
-            actualitzaVista();
-            sleep();
+            emplenarTromino(iniciX, iniciY, mida);
             return;
         }
 
         int centreX = iniciX + mida / 2 - 1;
         int centreY = iniciY + mida / 2 - 1;
 
-        boolean adaltEsquerra = foratX < iniciX + mida / 2 && foratY < iniciY + mida / 2;
-        boolean adaltDreta = foratX < iniciX + mida / 2 && foratY >= iniciY + mida / 2;
-        boolean abaixEsquerra = foratX >= iniciX + mida / 2 && foratY < iniciY + mida / 2;
-        boolean abaixDreta = foratX >= iniciX + mida / 2 && foratY >= iniciY + mida / 2;
+        boolean foratEsqSup = foratX < centreX + 1 && foratY < centreY + 1;
+        boolean foratDretSup = foratX < centreX + 1 && foratY >= centreY + 1;
+        boolean foratEsqInf = foratX >= centreX + 1 && foratY < centreY + 1;
+        boolean foratDretInf = foratX >= centreX + 1 && foratY >= centreY + 1;
 
-        if (!adaltEsquerra) {
+        if (!foratEsqSup) {
             model.colocaTromino(centreX, centreY);
         }
-        if (!adaltDreta) {
+        if (!foratDretSup) {
             model.colocaTromino(centreX, centreY + 1);
         }
-        if (!abaixEsquerra) {
+        if (!foratEsqInf) {
             model.colocaTromino(centreX + 1, centreY);
         }
-        if (!abaixDreta) {
+        if (!foratDretInf) {
             model.colocaTromino(centreX + 1, centreY + 1);
         }
 
         model.incrementaTrominoActual();
         actualitzaVista();
-        sleep();
+        pausaExecucio();
 
-        colocaTromino(mida / 2, iniciX, iniciY, adaltEsquerra ? foratX : centreX, adaltEsquerra ? foratY : centreY);
-        colocaTromino(mida / 2, iniciX, iniciY + mida / 2, adaltDreta ? foratX : centreX, adaltDreta ? foratY : centreY + 1);
-        colocaTromino(mida / 2, iniciX + mida / 2, iniciY, abaixEsquerra ? foratX : centreX + 1, abaixEsquerra ? foratY : centreY);
-        colocaTromino(mida / 2, iniciX + mida / 2, iniciY + mida / 2, abaixDreta ? foratX : centreX + 1, abaixDreta ? foratY : centreY + 1);
+        resoldreTromino(mida / 2, iniciX, iniciY, foratEsqSup ? foratX : centreX, foratEsqSup ? foratY : centreY);
+        resoldreTromino(mida / 2, iniciX, iniciY + mida / 2, foratDretSup ? foratX : centreX, foratDretSup ? foratY : centreY + 1);
+        resoldreTromino(mida / 2, iniciX + mida / 2, iniciY, foratEsqInf ? foratX : centreX + 1, foratEsqInf ? foratY : centreY);
+        resoldreTromino(mida / 2, iniciX + mida / 2, iniciY + mida / 2, foratDretInf ? foratX : centreX + 1, foratDretInf ? foratY : centreY + 1);
     }
 
-    public void atura() {
-        aturar = true;
+    private void emplenarTromino(int x, int y, int mida) {
+        for (int i = 0; i < mida; i++) {
+            for (int j = 0; j < mida; j++) {
+                if (model.esCasellaBuida(x + i, y + j)) {
+                    model.colocaTromino(x + i, y + j);
+                }
+            }
+        }
+        model.incrementaTrominoActual();
+        actualitzaVista();
+        pausaExecucio();
     }
 
     private void actualitzaVista() {
         principal.notificar(Notificacio.PINTAR);
     }
 
-    private void sleep() {
+    private void pausaExecucio() {
         try {
             Thread.sleep(1);
         } catch (InterruptedException e) {
@@ -101,13 +99,14 @@ public class TrominoRecursiu extends Thread implements Notificar {
         }
     }
 
+    public void atura() {
+        aturat = true;
+    }
+
     @Override
     public void notificar(Notificacio n) {
-        switch (n) {
-            case Notificacio.ATURAR -> {
-                atura();
-            }
-
+        if (n == Notificacio.ATURAR) {
+            atura();
         }
     }
 }

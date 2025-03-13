@@ -6,10 +6,6 @@ import main.Practica2;
 import model.Model;
 import model.Notificacio;
 
-/**
- *
- * @author tonitorres
- */
 public class TaulerPanel extends JPanel {
 
     private final Practica2 principal;
@@ -18,33 +14,32 @@ public class TaulerPanel extends JPanel {
     public TaulerPanel(Practica2 p) {
         principal = p;
         model = principal.getModel();
-        setPreferredSize(new Dimension(768, 768)); // Múltiple de 2
+        setPreferredSize(new Dimension(768, 768));
 
-        // Enable double buffering
         setDoubleBuffered(true);
 
         addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (model.getEnProces()) {
+                if (model.getEnExecucio()) {
                     return;
                 }
 
                 int midaPanel = Math.min(getWidth(), getHeight());
-                int midaCasella = midaPanel / model.tamanyTauler();
+                int midaCasella = midaPanel / model.getMidaTauler();
 
-                int x = e.getY() / midaCasella;
-                int y = e.getX() / midaCasella;
+                int fila = e.getY() / midaCasella;
+                int columna = e.getX() / midaCasella;
 
-                if (x >= model.tamanyTauler() || y >= model.tamanyTauler()) {
+                if (fila >= model.getMidaTauler() || columna >= model.getMidaTauler()) {
                     return;
                 }
 
-                if (model.seleccionatEspaiBuit()) {
-                    model.llevaForatAnterior();
+                if (model.hiHaForatSeleccionat()) {
+                    model.netejarForat();
                 }
 
-                model.colocaForat(x, y);
+                model.assignarForat(fila, columna);
                 principal.notificar(Notificacio.SELECCIONA);
                 repaint();
             }
@@ -63,50 +58,64 @@ public class TaulerPanel extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         int midaPanel = Math.min(getWidth(), getHeight());
-        int midaCasella = midaPanel / model.tamanyTauler();
+        int midaCasella = midaPanel / model.getMidaTauler();
 
-        // Draw grid lines
+        dibuixarQuadrícula(g2, midaCasella);
+        omplirCaselles(g2, midaCasella);
+        dibuixarBordesTrominos(g2, midaCasella);
+    }
+
+    private void dibuixarQuadrícula(Graphics2D g2, int midaCasella) {
         g2.setColor(Color.BLACK);
-        for (int i = 0; i <= model.tamanyTauler(); i++) {
-            g2.drawLine(0, i * midaCasella, model.tamanyTauler() * midaCasella, i * midaCasella);
-            g2.drawLine(i * midaCasella, 0, i * midaCasella, model.tamanyTauler() * midaCasella);
+        int midaTauler = model.getMidaTauler();
+
+        for (int i = 0; i <= midaTauler; i++) {
+            g2.drawLine(0, i * midaCasella, midaTauler * midaCasella, i * midaCasella);
+            g2.drawLine(i * midaCasella, 0, i * midaCasella, midaTauler * midaCasella);
         }
+    }
 
-        // Fill board tiles
-        for (int i = 0; i < model.tamanyTauler(); i++) {
-            for (int j = 0; j < model.tamanyTauler(); j++) {
-                int x = j * midaCasella;
-                int y = i * midaCasella;
+    private void omplirCaselles(Graphics2D g2, int midaCasella) {
+        int midaTauler = model.getMidaTauler();
 
-                if (model.esEspaiAmbForat(i, j)) {
+        for (int fila = 0; fila < midaTauler; fila++) {
+            for (int columna = 0; columna < midaTauler; columna++) {
+                int x = columna * midaCasella;
+                int y = fila * midaCasella;
+
+                if (model.esCasellaForat(fila, columna)) {
                     g2.setColor(Color.BLACK);
-                    g2.fillRect(x, y, midaCasella, midaCasella);
-                } else if (model.esEspaiAmbTromino(i, j)) {
-                    g2.setColor(principal.getModel().getColorPerTromino(i, j));
-                    g2.fillRect(x, y, midaCasella, midaCasella);
+                } else if (model.esCasellaTromino(fila, columna)) {
+                    g2.setColor(principal.getModel().getColorPerTromino(fila, columna));
+                } else {
+                    continue;
                 }
+
+                g2.fillRect(x, y, midaCasella, midaCasella);
             }
         }
+    }
 
-        // Draw borders around each tromino piece
+    private void dibuixarBordesTrominos(Graphics2D g2, int midaCasella) {
         g2.setColor(Color.BLACK);
-        for (int i = 0; i < model.tamanyTauler(); i++) {
-            for (int j = 0; j < model.tamanyTauler(); j++) {
-                if (model.esEspaiAmbTromino(i, j)) {
-                    int x = j * midaCasella;
-                    int y = i * midaCasella;
+        int midaTauler = model.getMidaTauler();
 
-                    // Draw only external edges of the tromino (avoid internal borders)
-                    if (model.esVoraSuperiorTromino(i, j)) {
+        for (int fila = 0; fila < midaTauler; fila++) {
+            for (int columna = 0; columna < midaTauler; columna++) {
+                if (model.esCasellaTromino(fila, columna)) {
+                    int x = columna * midaCasella;
+                    int y = fila * midaCasella;
+
+                    if (model.esVoraSuperiorTromino(fila, columna)) {
                         g2.drawLine(x, y, x + midaCasella, y);
                     }
-                    if (model.esVoraEsquerraTromino(i, j)) {
+                    if (model.esVoraEsquerraTromino(fila, columna)) {
                         g2.drawLine(x, y, x, y + midaCasella);
                     }
-                    if (model.esVoraInferiorTromino(i, j)) {
+                    if (model.esVoraInferiorTromino(fila, columna)) {
                         g2.drawLine(x, y + midaCasella, x + midaCasella, y + midaCasella);
                     }
-                    if (model.esVoraDretaTromino(i, j)) {
+                    if (model.esVoraDretaTromino(fila, columna)) {
                         g2.drawLine(x + midaCasella, y, x + midaCasella, y + midaCasella);
                     }
                 }

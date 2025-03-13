@@ -17,13 +17,12 @@ public class Practica2 implements Notificar {
     private TrominoRecursiu solver;
 
     public static void main(String[] args) {
-        (new Practica2()).inici();
-
+        new Practica2().iniciar();
     }
 
-    public void inici() {
+    public void iniciar() {
         model = new Model();
-        model.construirTauler(model.getMidesSeleccionables()[0]);
+        model.inicialitzaTauler(model.getMidesSeleccionables()[0]); // Comença amb la mida mínima
         vista = new Vista(this);
     }
 
@@ -34,27 +33,23 @@ public class Practica2 implements Notificar {
     @Override
     public void notificar(Notificacio n) {
         switch (n) {
-            case Notificacio.ARRANCAR -> {
-                model.setEnProces(true);
-                solver = new TrominoRecursiu(this);
-                solver.start();
-            }
-            case Notificacio.ATURAR -> {
-                model.setEnProces(false);
-                solver.atura();
-            }
-            case Notificacio.PINTAR -> {
+            case Notificacio.ARRANCAR ->
+                iniciarResolucio();
+            case Notificacio.ATURAR ->
+                aturarResolucio();
+            case Notificacio.PINTAR, Notificacio.SELECCIONA, Notificacio.FINALITZA ->
                 vista.notificar(n);
-            }
-            case Notificacio.FINALITZA -> {
-                model.setEnProces(false);
-                vista.notificar(n);
-            }
-            case Notificacio.SELECCIONA -> {
-                vista.notificar(n);
-            }
-            default -> {
-            }
         }
+    }
+
+    private void iniciarResolucio() {
+        model.setEnExecucio(true);
+        solver = new TrominoRecursiu(this);
+        solver.start();
+    }
+
+    private void aturarResolucio() {
+        model.setEnExecucio(false);
+        solver.atura();
     }
 }
