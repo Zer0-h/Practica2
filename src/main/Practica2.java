@@ -37,7 +37,11 @@ public class Practica2 implements Notificar {
                 iniciarResolucio();
             case Notificacio.ATURAR ->
                 aturarResolucio();
-            case Notificacio.PINTAR, Notificacio.SELECCIONA, Notificacio.FINALITZA ->
+            case Notificacio.FINALITZA -> {
+                model.setEnExecucio(false);
+                vista.notificar(n);
+            }
+            case Notificacio.PINTAR, Notificacio.SELECCIONA ->
                 vista.notificar(n);
         }
     }
