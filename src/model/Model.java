@@ -82,6 +82,9 @@ public class Model {
                 board[i][j] = 0;
             }
         }
+
+        initialEmptySquareX = -1;
+        initialEmptySquareY = -1;
     }
 
     public void setEnproces(boolean value) {

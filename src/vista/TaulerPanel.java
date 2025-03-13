@@ -18,7 +18,10 @@ public class TaulerPanel extends JPanel {
     public TaulerPanel(Practica2 p) {
         principal = p;
         model = principal.getModel();
-        setPreferredSize(new Dimension(768, 768)); // Multiplo de 2
+        setPreferredSize(new Dimension(768, 768)); // Múltiple de 2
+
+        // Enable double buffering
+        setDoubleBuffered(true);
 
         addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -42,7 +45,6 @@ public class TaulerPanel extends JPanel {
                 }
 
                 model.setInitialEmptySquare(x, y);
-
                 principal.notificar(Notificacio.SELECCIONA);
                 repaint();
             }
@@ -50,60 +52,62 @@ public class TaulerPanel extends JPanel {
     }
 
     public void pintar() {
-        if (this.getGraphics() != null) {
-            paintComponent(this.getGraphics());
-        }
+        repaint(); // Use repaint() instead of directly calling paintComponent()
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        super.paintComponent(g); // Clears the panel properly before redrawing
+
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         int panelSize = Math.min(getWidth(), getHeight());
         int tileSize = panelSize / model.getBoardLength();
 
-        if (!model.getEnproces()) {
-            g.setColor(Color.BLACK);
-            for (int i = 0; i <= model.getBoardLength(); i++) {
-                g.drawLine(0, i * tileSize, model.getBoardLength() * tileSize, i * tileSize);
-                g.drawLine(i * tileSize, 0, i * tileSize, model.getBoardLength() * tileSize);
-            }
+        // Draw grid lines
+        g2.setColor(Color.BLACK);
+        for (int i = 0; i <= model.getBoardLength(); i++) {
+            g2.drawLine(0, i * tileSize, model.getBoardLength() * tileSize, i * tileSize);
+            g2.drawLine(i * tileSize, 0, i * tileSize, model.getBoardLength() * tileSize);
         }
 
+        // Fill board tiles
         for (int i = 0; i < model.getBoardLength(); i++) {
             for (int j = 0; j < model.getBoardLength(); j++) {
                 int x = j * tileSize;
                 int y = i * tileSize;
 
                 if (model.isBoardSpaceVoid(i, j)) {
-                    g.setColor(Color.BLACK);
-                    g.fillRect(x, y, tileSize, tileSize);
+                    g2.setColor(Color.BLACK);
+                    g2.fillRect(x, y, tileSize, tileSize);
                 } else if (model.isBoardSpaceWithTromino(i, j)) {
-                    g.setColor(principal.getModel().getColorForTromino(i, j));
-                    g.fillRect(x, y, tileSize, tileSize);
+                    g2.setColor(principal.getModel().getColorForTromino(i, j));
+                    g2.fillRect(x, y, tileSize, tileSize);
                 }
             }
         }
 
         // Draw borders around each tromino piece
-        g.setColor(Color.BLACK);
+        g2.setColor(Color.BLACK);
         for (int i = 0; i < model.getBoardLength(); i++) {
             for (int j = 0; j < model.getBoardLength(); j++) {
                 if (model.isBoardSpaceWithTromino(i, j)) {
                     int x = j * tileSize;
                     int y = i * tileSize;
 
-                    // Check if this is the edge of a tromino (to avoid inner borders)
+                    // Draw only external edges of the tromino (avoid internal borders)
                     if (model.isBoardSpaceTopEdge(i, j)) {
-                        g.drawLine(x, y, x + tileSize, y);
+                        g2.drawLine(x, y, x + tileSize, y);
                     }
                     if (model.isBoardSpaceLeftEdge(i, j)) {
-                        g.drawLine(x, y, x, y + tileSize);
+                        g2.drawLine(x, y, x, y + tileSize);
                     }
                     if (model.isBoardSpaceBottomEdge(i, j)) {
-                        g.drawLine(x, y + tileSize, x + tileSize, y + tileSize);
+                        g2.drawLine(x, y + tileSize, x + tileSize, y + tileSize);
                     }
                     if (model.isBoardSpaceRightEdge(i, j)) {
-                        g.drawLine(x + tileSize, y, x + tileSize, y + tileSize);
+                        g2.drawLine(x + tileSize, y, x + tileSize, y + tileSize);
                     }
                 }
             }
