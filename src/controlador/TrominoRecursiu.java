@@ -1,9 +1,9 @@
 package controlador;
 
 import main.Practica2;
+import model.Model;
 import model.Notificacio;
 import model.Notificar;
-import model.Model;
 
 /**
  *
@@ -11,7 +11,7 @@ import model.Model;
  */
 public class TrominoRecursiu extends Thread implements Notificar {
 
-    private volatile boolean isStopped = false;
+    private volatile boolean aturar = false;
     private final Practica2 principal;
     private final Model model;
 
@@ -22,7 +22,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
 
     @Override
     public void run() {
-        isStopped = false;
+        aturar = false;
 
         long startTime = System.currentTimeMillis();
 
@@ -36,7 +36,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
     }
 
     private void tileRec(int size, int topX, int topY, int holeX, int holeY) {
-        if (isStopped) {
+        if (aturar) {
             return;
         }
 
@@ -49,7 +49,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
                 }
             }
             model.increaseCurrentTromino();
-            updateView();
+            actualitzaVista();
             sleep();
             return;
         }
@@ -76,7 +76,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
         }
 
         model.increaseCurrentTromino();
-        updateView();
+        actualitzaVista();
         sleep();
 
         tileRec(size / 2, topX, topY, inUpperLeft ? holeX : centerX, inUpperLeft ? holeY : centerY);
@@ -85,11 +85,11 @@ public class TrominoRecursiu extends Thread implements Notificar {
         tileRec(size / 2, topX + size / 2, topY + size / 2, inBottomRight ? holeX : centerX + 1, inBottomRight ? holeY : centerY + 1);
     }
 
-    public void stopSolver() {
-        isStopped = true;
+    public void atura() {
+        aturar = true;
     }
 
-    private void updateView() {
+    private void actualitzaVista() {
         principal.notificar(Notificacio.PINTAR);
     }
 
@@ -105,8 +105,9 @@ public class TrominoRecursiu extends Thread implements Notificar {
     public void notificar(Notificacio n) {
         switch (n) {
             case Notificacio.ATURAR -> {
-                stopSolver();
+                atura();
             }
+
         }
     }
 }

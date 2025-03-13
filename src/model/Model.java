@@ -8,20 +8,35 @@ import java.awt.Color;
  */
 public class Model {
 
+    private Integer[] boardSizes;
     private int[][] board;
     private int boardSize;
-    public double trominoConstant;
-    public double lastExecutionTime;
-    public int currentNum;
-    public int initialEmptySquareX;
-    public int initialEmptySquareY;
+    private double trominoConstant;
+    private double lastExecutionTime;
+    private int currentNum;
+    private int initialEmptySquareX;
+    private int initialEmptySquareY;
+    private boolean enproces;
 
     public Model() {
         trominoConstant = 1.0;
+        boardSizes = new Integer[]{4, 8, 16, 32, 64, 128};
+        enproces = false;
+    }
+
+    public Integer[] getSelectableBoardSizes() {
+        return boardSizes;
     }
 
     public int getInitialEmptySquareX() {
         return initialEmptySquareX;
+    }
+
+    public void setInitialEmptySquare(int x, int y) {
+        initialEmptySquareX = x;
+        initialEmptySquareY = y;
+
+        board[this.initialEmptySquareX][this.initialEmptySquareY] = -1;
     }
 
     public int getInitialEmptySquareY() {
@@ -30,6 +45,14 @@ public class Model {
 
     public int[][] getBoard() {
         return board;
+    }
+
+    public int getBoardLength() {
+        return board.length;
+    }
+
+    public boolean seleccionatEspaiBuit() {
+        return initialEmptySquareX != -1 && initialEmptySquareY != -1;
     }
 
     public void setLastExecutionTime(double value) {
@@ -49,31 +72,60 @@ public class Model {
         return (trominoConstant * estimatedCalls) / 1000.0;
     }
 
-    public void preparar(int size, int fixedX, int fixedY) {
-        int actualSize = 1;
-        while (actualSize < size) {
-            actualSize *= 2;
-        }
-        this.boardSize = actualSize;
+    public void construirTauler(int size) {
+        this.boardSize = size;
         this.board = new int[boardSize][boardSize];
         this.currentNum = 1;
-        this.initialEmptySquareX = fixedX;
-        this.initialEmptySquareY = fixedY;
 
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 board[i][j] = 0;
             }
         }
-        board[fixedX][fixedY] = -1;
+    }
+
+    public void setEnproces(boolean value) {
+        enproces = value;
+    }
+
+    public boolean getEnproces() {
+        return enproces;
     }
 
     public int getBoardSize() {
         return boardSize;
     }
 
+    public void resetPreviousEmptySpace() {
+        board[initialEmptySquareX][initialEmptySquareY] = 0;
+    }
+
     public boolean isBoardSpaceEmpty(int x, int y) {
         return board[x][y] == 0;
+    }
+
+    public boolean isBoardSpaceVoid(int x, int y) {
+        return board[x][y] == -1;
+    }
+
+    public boolean isBoardSpaceWithTromino(int x, int y) {
+        return board[x][y] > 0;
+    }
+
+    public boolean isBoardSpaceTopEdge(int x, int y) {
+        return x == 0 || board[x - 1][y] != board[x][y];
+    }
+
+    public boolean isBoardSpaceBottomEdge(int x, int y) {
+        return x == board.length - 1 || board[x + 1][y] != board[x][y];
+    }
+
+    public boolean isBoardSpaceLeftEdge(int x, int y) {
+        return y == 0 || board[x][y - 1] != board[x][y];
+    }
+
+    public boolean isBoardSpaceRightEdge(int x, int y) {
+        return y == board[x].length - 1 || board[x][y + 1] != board[x][y];
     }
 
     public void setTrominoToBoard(int x, int y) {

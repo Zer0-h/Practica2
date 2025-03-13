@@ -3,6 +3,8 @@ package vista;
 import java.awt.*;
 import javax.swing.*;
 import main.Practica2;
+import model.Model;
+import model.Notificacio;
 
 /**
  *
@@ -10,93 +12,72 @@ import main.Practica2;
  */
 public class TaulerPanel extends JPanel {
 
-    private int[][] board;
-    private int fixedX = -1, fixedY = -1;
-    private boolean tileSelected = false;
-    private boolean solvingStarted = false;
     private final Practica2 principal;
+    private final Model model;
 
-    public TaulerPanel(int size, Practica2 p) {
+    public TaulerPanel(Practica2 p) {
         principal = p;
+        model = principal.getModel();
         setPreferredSize(new Dimension(768, 768)); // Multiplo de 2
-        board = new int[size][size];
 
         addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (solvingStarted) {
+                if (model.getEnproces()) {
                     return;
                 }
 
                 int panelSize = Math.min(getWidth(), getHeight());
-                int tileSize = panelSize / board.length;
+                int tileSize = panelSize / model.getBoardLength();
 
                 int x = e.getY() / tileSize;
                 int y = e.getX() / tileSize;
 
-                if (x >= board.length || y >= board.length) {
+                if (x >= model.getBoardLength() || y >= model.getBoardLength()) {
                     return;
                 }
 
-                if (tileSelected) {
-                    board[fixedX][fixedY] = 0;
+                if (model.seleccionatEspaiBuit()) {
+                    model.resetPreviousEmptySpace();
                 }
 
-                fixedX = x;
-                fixedY = y;
-                board[fixedX][fixedY] = -1;
-                tileSelected = true;
+                model.setInitialEmptySquare(x, y);
+
+                principal.notificar(Notificacio.SELECCIONA);
                 repaint();
             }
         });
     }
 
-    public void updateBoard(int[][] newBoard) {
-        board = newBoard;
-        solvingStarted = true;
-        repaint();
-    }
-
-    public void clearBoard() {
-        board = new int[board.length][board.length];
-        fixedX = -1;
-        fixedY = -1;
-        tileSelected = false;
-        solvingStarted = false;
-        repaint();
-    }
-
-    public int getFixedX() {
-        return fixedX;
-    }
-
-    public int getFixedY() {
-        return fixedY;
+    public void pintar() {
+        if (this.getGraphics() != null) {
+            paintComponent(this.getGraphics());
+        }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         int panelSize = Math.min(getWidth(), getHeight());
-        int tileSize = panelSize / board.length;
+        int tileSize = panelSize / model.getBoardLength();
 
-        if (!solvingStarted) {
+        if (!model.getEnproces()) {
             g.setColor(Color.BLACK);
-            for (int i = 0; i <= board.length; i++) {
-                g.drawLine(0, i * tileSize, board.length * tileSize, i * tileSize);
-                g.drawLine(i * tileSize, 0, i * tileSize, board.length * tileSize);
+            for (int i = 0; i <= model.getBoardLength(); i++) {
+                g.drawLine(0, i * tileSize, model.getBoardLength() * tileSize, i * tileSize);
+                g.drawLine(i * tileSize, 0, i * tileSize, model.getBoardLength() * tileSize);
             }
         }
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
+        for (int i = 0; i < model.getBoardLength(); i++) {
+            for (int j = 0; j < model.getBoardLength(); j++) {
                 int x = j * tileSize;
                 int y = i * tileSize;
 
-                if (board[i][j] == -1) {
+                if (model.isBoardSpaceVoid(i, j)) {
                     g.setColor(Color.BLACK);
                     g.fillRect(x, y, tileSize, tileSize);
-                } else if (board[i][j] > 0) {
+                } else if (model.isBoardSpaceWithTromino(i, j)) {
                     g.setColor(principal.getModel().getColorForTromino(i, j));
                     g.fillRect(x, y, tileSize, tileSize);
                 }
@@ -105,27 +86,23 @@ public class TaulerPanel extends JPanel {
 
         // Draw borders around each tromino piece
         g.setColor(Color.BLACK);
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] > 0) {
+        for (int i = 0; i < model.getBoardLength(); i++) {
+            for (int j = 0; j < model.getBoardLength(); j++) {
+                if (model.isBoardSpaceWithTromino(i, j)) {
                     int x = j * tileSize;
                     int y = i * tileSize;
 
                     // Check if this is the edge of a tromino (to avoid inner borders)
-                    if (i == 0 || board[i - 1][j] != board[i][j]) // Top
-                    {
+                    if (model.isBoardSpaceTopEdge(i, j)) {
                         g.drawLine(x, y, x + tileSize, y);
                     }
-                    if (j == 0 || board[i][j - 1] != board[i][j]) // Left
-                    {
+                    if (model.isBoardSpaceLeftEdge(i, j)) {
                         g.drawLine(x, y, x, y + tileSize);
                     }
-                    if (i == board.length - 1 || board[i + 1][j] != board[i][j]) // Bottom
-                    {
+                    if (model.isBoardSpaceBottomEdge(i, j)) {
                         g.drawLine(x, y + tileSize, x + tileSize, y + tileSize);
                     }
-                    if (j == board[i].length - 1 || board[i][j + 1] != board[i][j]) // Right
-                    {
+                    if (model.isBoardSpaceRightEdge(i, j)) {
                         g.drawLine(x + tileSize, y, x + tileSize, y + tileSize);
                     }
                 }

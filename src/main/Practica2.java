@@ -1,9 +1,9 @@
 package main;
 
 import controlador.TrominoRecursiu;
+import model.Model;
 import model.Notificacio;
 import model.Notificar;
-import model.Model;
 import vista.Vista;
 
 /**
@@ -23,6 +23,7 @@ public class Practica2 implements Notificar {
 
     public void inicio() {
         model = new Model();
+        model.construirTauler(model.getSelectableBoardSizes()[0]);
         vista = new Vista(this);
     }
 
@@ -34,28 +35,22 @@ public class Practica2 implements Notificar {
     public void notificar(Notificacio n) {
         switch (n) {
             case Notificacio.ARRANCAR -> {
-                int size = (int) vista.getSizeSelector().getSelectedItem();
-                int fixedX = vista.getBoardPanel().getFixedX();
-                int fixedY = vista.getBoardPanel().getFixedY();
-
-                model.preparar(size, fixedX, fixedY);
-
-                if (fixedX == -1 || fixedY == -1) {
-                    System.out.println("Please select a missing tile before solving.");
-                    return;
-                }
-
+                model.setEnproces(true);
                 solver = new TrominoRecursiu(this);
-                vista.setSolving(true);
                 solver.start();
             }
             case Notificacio.ATURAR -> {
-                solver.stopSolver();
+                model.setEnproces(false);
+                solver.atura();
             }
             case Notificacio.PINTAR -> {
                 vista.notificar(n);
             }
             case Notificacio.FINALITZA -> {
+                model.setEnproces(false);
+                vista.notificar(n);
+            }
+            case Notificacio.SELECCIONA -> {
                 vista.notificar(n);
             }
             default -> {

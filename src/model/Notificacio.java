@@ -9,4 +9,5 @@ public enum Notificacio {
     ATURAR,
     PINTAR,
     FINALITZA,
+    SELECCIONA,
 }

@@ -3,17 +3,15 @@ package vista;
 import java.awt.*;
 import javax.swing.*;
 import main.Practica2;
+import model.Model;
 import model.Notificacio;
 import model.Notificar;
-import model.Model;
 
 /**
  *
  * @author tonitorres
  */
 public class Vista extends JFrame implements Notificar {
-
-    private static final Integer[] BOARD_SIZES = {4, 8, 16, 32, 64, 128};
 
     private final JButton startButton, clearButton, stopButton;
     private JComboBox<Integer> sizeSelector;
@@ -30,10 +28,13 @@ public class Vista extends JFrame implements Notificar {
 
         // Control Panel
         JPanel controlPanel = new JPanel();
-        sizeSelector = new JComboBox<>(BOARD_SIZES);
+        sizeSelector = new JComboBox<>(principal.getModel().getSelectableBoardSizes());
         startButton = new JButton("Solve");
         clearButton = new JButton("Clear");
         stopButton = new JButton("Stop");
+
+        startButton.setEnabled(false);
+        clearButton.setEnabled(false);
         stopButton.setEnabled(false);
 
         controlPanel.add(new JLabel("Board Size:"));
@@ -44,7 +45,7 @@ public class Vista extends JFrame implements Notificar {
 
         add(controlPanel, BorderLayout.NORTH);
 
-        boardPanel = new TaulerPanel(BOARD_SIZES[0], principal);
+        boardPanel = new TaulerPanel(principal);
         add(boardPanel, BorderLayout.CENTER);
 
         // **New Time Display Panel**
@@ -55,28 +56,40 @@ public class Vista extends JFrame implements Notificar {
 
         // Listener to update board when size changes
         sizeSelector.addActionListener(e -> {
-            if (!isSolving()) { // Prevent changing size while solving
+            Model model = principal.getModel();
+            if (!model.getEnproces()) { // Prevent changing size while solving
                 int newSize = (int) sizeSelector.getSelectedItem();
-                boardPanel.updateBoard(new int[newSize][newSize]);
-                boardPanel.clearBoard();
+
+                principal.getModel().construirTauler(newSize);
+                boardPanel.pintar();
             }
         });
 
         startButton.addActionListener(e -> {
             principal.notificar(Notificacio.ARRANCAR);
-            setSolving(true);
+
+            sizeSelector.setEnabled(false);
+            startButton.setEnabled(false);
+            clearButton.setEnabled(false);
+            stopButton.setEnabled(true);
+
             Model model = principal.getModel();
             setEstimatedTime(model.estimateTrominoExecutionTime());
         });
 
         clearButton.addActionListener(e -> {
-            getBoardPanel().clearBoard();
-            setSolving(false);
+            principal.getModel().construirTauler((int) sizeSelector.getSelectedItem());
+            boardPanel.pintar();
+
+            clearButton.setEnabled(false);
         });
 
         stopButton.addActionListener(e -> {
             principal.notificar(Notificacio.ATURAR);
-            setSolving(false);
+
+            sizeSelector.setEnabled(true);
+            clearButton.setEnabled(true);
+            stopButton.setEnabled(false);
         });
 
         pack();
@@ -96,23 +109,8 @@ public class Vista extends JFrame implements Notificar {
         return stopButton;
     }
 
-    public JComboBox<Integer> getSizeSelector() {
-        return sizeSelector;
-    }
-
     public TaulerPanel getBoardPanel() {
         return boardPanel;
-    }
-
-    public void setSolving(boolean isSolving) {
-        sizeSelector.setEnabled(!isSolving);
-        startButton.setEnabled(!isSolving);
-        clearButton.setEnabled(!isSolving);
-        stopButton.setEnabled(isSolving);
-    }
-
-    public boolean isSolving() {
-        return !sizeSelector.isEnabled(); // If disabled, solving is in progress
     }
 
     public void setEstimatedTime(double estimatedTime) {
@@ -136,16 +134,19 @@ public class Vista extends JFrame implements Notificar {
     public void notificar(Notificacio n) {
         switch (n) {
             case Notificacio.PINTAR -> {
-                Model model = principal.getModel();
-                this.boardPanel.updateBoard(model.getBoard());
+                boardPanel.pintar();
             }
             case Notificacio.FINALITZA -> {
-                Model model = principal.getModel();
+                setActualTime(principal.getModel().getLastExecutionTime());
 
-                setActualTime(model.getLastExecutionTime());
-                setSolving(false);
+                sizeSelector.setEnabled(true);
+                clearButton.setEnabled(true);
+                stopButton.setEnabled(false);
             }
-
+            case Notificacio.SELECCIONA -> {
+                startButton.setEnabled(true);
+                clearButton.setEnabled(true);
+            }
             default -> {
             }
         }
