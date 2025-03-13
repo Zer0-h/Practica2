@@ -6,7 +6,7 @@ import java.awt.Color;
  *
  * @author tonitorres
  */
-public class TrominoModel {
+public class Model {
 
     private int[][] board;
     private int boardSize;
@@ -16,7 +16,7 @@ public class TrominoModel {
     public int initialEmptySquareX;
     public int initialEmptySquareY;
 
-    public TrominoModel() {
+    public Model() {
         trominoConstant = 1.0;
     }
 

@@ -1,28 +1,28 @@
-package view;
+package vista;
 
 import java.awt.*;
 import javax.swing.*;
-import main.TrominoMain;
+import main.Practica2;
 import model.Notificacio;
 import model.Notificar;
-import model.TrominoModel;
+import model.Model;
 
 /**
  *
  * @author tonitorres
  */
-public class TrominoView extends JFrame implements Notificar {
+public class Vista extends JFrame implements Notificar {
 
     private static final Integer[] BOARD_SIZES = {4, 8, 16, 32, 64, 128};
 
     private final JButton startButton, clearButton, stopButton;
     private JComboBox<Integer> sizeSelector;
     private final JLabel timeLabel; // Added time label
-    private TrominoPanel boardPanel;
+    private TaulerPanel boardPanel;
     private double estimatedTime = 0.0; // Store estimated time for persistence
-    private final TrominoMain principal;
+    private final Practica2 principal;
 
-    public TrominoView(TrominoMain p) {
+    public Vista(Practica2 p) {
         principal = p;
         setTitle("Tromino Tiling");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,7 +44,7 @@ public class TrominoView extends JFrame implements Notificar {
 
         add(controlPanel, BorderLayout.NORTH);
 
-        boardPanel = new TrominoPanel(BOARD_SIZES[0], principal);
+        boardPanel = new TaulerPanel(BOARD_SIZES[0], principal);
         add(boardPanel, BorderLayout.CENTER);
 
         // **New Time Display Panel**
@@ -65,7 +65,7 @@ public class TrominoView extends JFrame implements Notificar {
         startButton.addActionListener(e -> {
             principal.notificar(Notificacio.ARRANCAR);
             setSolving(true);
-            TrominoModel model = principal.getModel();
+            Model model = principal.getModel();
             setEstimatedTime(model.estimateTrominoExecutionTime());
         });
 
@@ -100,7 +100,7 @@ public class TrominoView extends JFrame implements Notificar {
         return sizeSelector;
     }
 
-    public TrominoPanel getBoardPanel() {
+    public TaulerPanel getBoardPanel() {
         return boardPanel;
     }
 
@@ -136,11 +136,11 @@ public class TrominoView extends JFrame implements Notificar {
     public void notificar(Notificacio n) {
         switch (n) {
             case Notificacio.PINTAR -> {
-                TrominoModel model = principal.getModel();
+                Model model = principal.getModel();
                 this.boardPanel.updateBoard(model.getBoard());
             }
             case Notificacio.FINALITZA -> {
-                TrominoModel model = principal.getModel();
+                Model model = principal.getModel();
 
                 setActualTime(model.getLastExecutionTime());
                 setSolving(false);

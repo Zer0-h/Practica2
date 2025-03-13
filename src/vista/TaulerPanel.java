@@ -1,22 +1,22 @@
-package view;
+package vista;
 
 import java.awt.*;
 import javax.swing.*;
-import main.TrominoMain;
+import main.Practica2;
 
 /**
  *
  * @author tonitorres
  */
-public class TrominoPanel extends JPanel {
+public class TaulerPanel extends JPanel {
 
     private int[][] board;
     private int fixedX = -1, fixedY = -1;
     private boolean tileSelected = false;
     private boolean solvingStarted = false;
-    private final TrominoMain principal;
+    private final Practica2 principal;
 
-    public TrominoPanel(int size, TrominoMain p) {
+    public TaulerPanel(int size, Practica2 p) {
         principal = p;
         setPreferredSize(new Dimension(768, 768)); // Multiplo de 2
         board = new int[size][size];

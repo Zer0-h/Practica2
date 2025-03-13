@@ -1,32 +1,32 @@
 package main;
 
-import controller.TrominoSolver;
+import controlador.TrominoRecursiu;
 import model.Notificacio;
 import model.Notificar;
-import model.TrominoModel;
-import view.TrominoView;
+import model.Model;
+import vista.Vista;
 
 /**
  *
  * @author tonitorres
  */
-public class TrominoMain implements Notificar {
+public class Practica2 implements Notificar {
 
-    private TrominoView vista;
-    private TrominoModel model;
-    private TrominoSolver solver;
+    private Vista vista;
+    private Model model;
+    private TrominoRecursiu solver;
 
     public static void main(String[] args) {
-        (new TrominoMain()).inicio();
+        (new Practica2()).inicio();
 
     }
 
     public void inicio() {
-        model = new TrominoModel();
-        vista = new TrominoView(this);
+        model = new Model();
+        vista = new Vista(this);
     }
 
-    public TrominoModel getModel() {
+    public Model getModel() {
         return model;
     }
 
@@ -45,7 +45,7 @@ public class TrominoMain implements Notificar {
                     return;
                 }
 
-                solver = new TrominoSolver(this);
+                solver = new TrominoRecursiu(this);
                 vista.setSolving(true);
                 solver.start();
             }

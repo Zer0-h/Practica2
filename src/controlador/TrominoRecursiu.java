@@ -1,21 +1,21 @@
-package controller;
+package controlador;
 
-import main.TrominoMain;
+import main.Practica2;
 import model.Notificacio;
 import model.Notificar;
-import model.TrominoModel;
+import model.Model;
 
 /**
  *
  * @author tonitorres
  */
-public class TrominoSolver extends Thread implements Notificar {
+public class TrominoRecursiu extends Thread implements Notificar {
 
     private volatile boolean isStopped = false;
-    private final TrominoMain principal;
-    private final TrominoModel model;
+    private final Practica2 principal;
+    private final Model model;
 
-    public TrominoSolver(TrominoMain p) {
+    public TrominoRecursiu(Practica2 p) {
         principal = p;
         model = p.getModel();
     }
