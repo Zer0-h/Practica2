@@ -7,53 +7,99 @@ import model.Notificar;
 import vista.Vista;
 
 /**
+ * Classe principal del programa que gestiona la inicialització i la comunicació
+ * entre el Model, la Vista i el Controlador seguint el patró MVC.
  *
  * @author tonitorres
  */
 public class Practica2 implements Notificar {
 
+    // Vista de la interfície gràfica d'usuari (GUI)
     private Vista vista;
-    private Model model;
-    private TrominoRecursiu solver;
 
+    // Model que conté la lògica i les dades del problema
+    private Model model;
+
+    // Controlador que implementa la resolució del problema de Tromino de forma recursiva
+    private TrominoRecursiu trominoRecursiu;
+
+    /**
+     * Mètode principal que inicia l'execució del programa.
+     *
+     * @param args Arguments de la línia de comandes (no s'utilitzen)
+     */
     public static void main(String[] args) {
         new Practica2().iniciar();
     }
 
+    /**
+     * Inicialitza el Model i la Vista.
+     *
+     * - Crea el model i inicialitza el tauler amb la mida mínima disponible.
+     * - Crea la vista i li passa una referència d'aquesta classe per gestionar
+     * notificacions.
+     */
     public void iniciar() {
         model = new Model();
         model.inicialitzaTauler(model.getMidesSeleccionables()[0]); // Comença amb la mida mínima
         vista = new Vista(this);
     }
 
+    /**
+     * Retorna el Model actual de l'aplicació.
+     *
+     * @return instància del Model
+     */
     public Model getModel() {
         return model;
     }
 
+    /**
+     * Gestiona les notificacions rebudes d'altres components (Vista o
+     * Controlador). S'encarrega d'executar accions segons el tipus de
+     * notificació rebut.
+     *
+     * @param n Tipus de notificació
+     */
     @Override
     public void notificar(Notificacio n) {
         switch (n) {
             case Notificacio.ARRANCAR ->
-                iniciarResolucio();
+                iniciarResolucio(); // Inicia la resolució del problema
             case Notificacio.ATURAR ->
-                aturarResolucio();
+                aturarResolucio();   // Atura la resolució del problema
             case Notificacio.FINALITZA -> {
+                // Marca el model com a no en execució i notifica a la vista.
                 model.setEnExecucio(false);
                 vista.notificar(n);
             }
-            case Notificacio.PINTAR, Notificacio.SELECCIONA ->
+            case Notificacio.PINTAR, Notificacio.SELECCIONA_FORAT ->
+                // Notifica la vista per repintar o gestionar la selecció d'un forat
                 vista.notificar(n);
         }
     }
 
+    /**
+     * Inicia la resolució del problema:
+     *
+     * - Marca el model com en execució.
+     * - Crea un nou controlador `TrominoRecursiu` i inicia el procés en un fil
+     * independent.
+     */
     private void iniciarResolucio() {
         model.setEnExecucio(true);
-        solver = new TrominoRecursiu(this);
-        solver.start();
+        trominoRecursiu = new TrominoRecursiu(this);
+        trominoRecursiu.start();
     }
 
+    /**
+     * Atura la resolució del problema:
+     *
+     * - Marca el model com a no en execució.
+     * - Indica al controlador que ha d'aturar-se.
+     */
     private void aturarResolucio() {
         model.setEnExecucio(false);
-        solver.atura();
+        trominoRecursiu.atura();
     }
 }
