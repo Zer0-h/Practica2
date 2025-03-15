@@ -24,12 +24,12 @@ public class TrominoRecursiu extends Thread implements Notificar {
     public void run() {
         aturat = false;
 
-        long iniciTemps = System.currentTimeMillis();
+        long iniciTemps = System.nanoTime();
         resoldreTromino(model.getMidaTauler(), 0, 0, model.getForatX(), model.getForatY());
-        long tempsTotal = System.currentTimeMillis() - iniciTemps;
+        long tempsTotal = System.nanoTime() - iniciTemps;
 
         model.calculaConstantTromino(tempsTotal);
-        model.setTempsExecucio(tempsTotal / 1000.0);
+        model.setTempsExecucio(tempsTotal / 1000000000.0);
         principal.notificar(Notificacio.FINALITZA);
     }
 

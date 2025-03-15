@@ -68,7 +68,7 @@ public class Model {
 
     public double estimaTempsExecucio() {
         long estimatedCalls = (long) Math.pow(4, Math.log(tauler.length) / Math.log(2));
-        return (constantTromino * estimatedCalls) / 1000.0;
+        return (constantTromino * estimatedCalls) / 1000000000.0;
     }
 
     public void inicialitzaTauler(int size) {
