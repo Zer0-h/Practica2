@@ -3,13 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Capitol 2">
-            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/main/TrominoMain.java</file>
             <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/model/Notificar.java</file>
-            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/view/TrominoView.java</file>
-            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/view/TrominoPanel.java</file>
+            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/model/Model.java</file>
+            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/vista/Vista.java</file>
+            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/controlador/TrominoRecursiu.java</file>
             <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/model/Notificacio.java</file>
-            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/controller/TrominoSolver.java</file>
-            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/model/TrominoModel.java</file>
+            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/main/Practica2.java</file>
+            <file>file:/Users/tonitorresescribano/NetBeansProjects/Practica2/src/vista/TaulerPanel.java</file>
         </group>
     </open-files>
 </project-private>
