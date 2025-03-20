@@ -1,7 +1,7 @@
 package controlador;
 
-import model.TrominoRecursiu;
 import model.Model;
+import model.TrominoRecursiu;
 import vista.Vista;
 
 /**

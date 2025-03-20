@@ -7,7 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Classe Model que representa el tauler i la lògica del problema de Tromino.
- * S'encarrega de gestionar l'estat del tauler i proporcionar mètodes per manipular-lo.
+ * S'encarrega de gestionar l'estat del tauler i proporcionar mètodes per
+ * manipular-lo.
  *
  * @author tonitorres
  */
@@ -39,7 +40,8 @@ public class Model {
     private final Map<Integer, Color> trominoColors;
 
     /**
-     * Constructor de la classe Model. Inicialitza les mides del tauler disponibles
+     * Constructor de la classe Model. Inicialitza les mides del tauler
+     * disponibles
      * i estableix valors per defecte.
      */
     public Model() {
@@ -52,8 +54,8 @@ public class Model {
     }
 
     /** =======================
-     *  GETTERS
-     *  =======================
+     * GETTERS
+     * =======================
      */
     public Integer[] getMidesSeleccionables() {
         return midesSeleccionables;
@@ -84,8 +86,8 @@ public class Model {
     }
 
     /** =======================
-     *  SETTERS
-     *  =======================
+     * SETTERS
+     * =======================
      */
     public void setTempsExecucio(double value) {
         tempsExecucio = value;
@@ -102,6 +104,7 @@ public class Model {
     /**
      * Calcula la constant multiplicativa del procés del tromino per estimar
      * el temps d'execució basant-se en el temps transcorregut.
+     *
      * @param elapsedTime Temps total d'execució en nanosegons
      */
     public void calculaConstantTromino(double elapsedTime) {
@@ -109,7 +112,9 @@ public class Model {
     }
 
     /**
-     * Estima el temps d'execució del procés total per a la mida actual del tauler.
+     * Estima el temps d'execució del procés total per a la mida actual del
+     * tauler.
+     *
      * @return Temps estimat en segons
      */
     public double estimaTempsExecucio() {
@@ -117,8 +122,8 @@ public class Model {
     }
 
     /** ==============================
-     *  GESTIÓ DEL TAULER
-     *  ==============================
+     * GESTIÓ DEL TAULER
+     * ==============================
      */
     public void inicialitzaTauler(int size) {
         tauler = new int[size][size];
@@ -143,10 +148,9 @@ public class Model {
     }
 
     /** ==============================
-     *  GESTIÓ DELS TROMINOS
-     *  ==============================
+     * GESTIÓ DELS TROMINOS
+     * ==============================
      */
-
     public boolean esCasellaBuida(int x, int y) {
         return tauler[x][y] == 0;
     }
@@ -171,10 +175,9 @@ public class Model {
     }
 
     /** ==============================
-     *  DETECCIÓ DE BORDES
-     *  ==============================
+     * DETECCIÓ DE BORDES
+     * ==============================
      */
-
     public boolean esVoraSuperiorTromino(int x, int y) {
         return x == 0 || tauler[x - 1][y] != tauler[x][y];
     }
@@ -192,8 +195,8 @@ public class Model {
     }
 
     /** ==============================
-     *  COLOR DELS TROMINOS
-     *  ==============================
+     * COLOR DELS TROMINOS
+     * ==============================
      */
     public void setTrominoColor(Color color) {
         trominoColor = color;

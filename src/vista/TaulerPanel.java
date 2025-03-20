@@ -1,10 +1,10 @@
 package vista;
 
+import controlador.Controlador;
+import controlador.Notificacio;
 import java.awt.*;
 import javax.swing.*;
-import controlador.Controlador;
 import model.Model;
-import controlador.Notificacio;
 
 /**
  * Panell gràfic que representa el tauler de joc per al problema del Tromino.
@@ -65,8 +65,9 @@ public class TaulerPanel extends JPanel {
     /**
      * Verifica si el clic està dins dels límits vàlids del tauler.
      *
-     * @param fila Fila on s'ha fet clic
+     * @param fila    Fila on s'ha fet clic
      * @param columna Columna on s'ha fet clic
+     *
      * @return Cert si el clic és vàlid, fals en cas contrari
      */
     private boolean esClicValid(int fila, int columna) {

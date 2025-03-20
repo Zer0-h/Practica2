@@ -1,15 +1,16 @@
 package model;
 
 import controlador.Controlador;
-import java.util.ArrayList;
-import java.util.concurrent.*;
 import controlador.Notificacio;
 import controlador.Notificar;
+import java.util.ArrayList;
+import java.util.concurrent.*;
 
 /**
  * Classe encarregada de resoldre el problema del Tromino de manera recursiva.
  * Només la primera crida utilitza fils per paral·lelitzar la resolució.
- * Implementa el patró d'esdeveniments per comunicar-se amb la resta del programa.
+ * Implementa el patró d'esdeveniments per comunicar-se amb la resta del
+ * programa.
  *
  * @author tonitorres
  */
@@ -66,15 +67,18 @@ public class TrominoRecursiu extends Thread implements Notificar {
      * Mètode recursiu per resoldre el problema del Tromino.
      * La primera crida utilitza fils, després es fa recursió normal.
      *
-     * @param mida      Mida de la submatriu actual
-     * @param iniciX    Coordenada X inicial
-     * @param iniciY    Coordenada Y inicial
-     * @param foratX    Coordenada X del forat
-     * @param foratY    Coordenada Y del forat
-     * @param utilitzaFils Indica si s'ha d'executar amb fils (només en la primera crida)
+     * @param mida         Mida de la submatriu actual
+     * @param iniciX       Coordenada X inicial
+     * @param iniciY       Coordenada Y inicial
+     * @param foratX       Coordenada X del forat
+     * @param foratY       Coordenada Y del forat
+     * @param utilitzaFils Indica si s'ha d'executar amb fils (només en la
+     *                     primera crida)
      */
     private void resoldreTromino(int mida, int iniciX, int iniciY, int foratX, int foratY, boolean utilitzaFils) {
-        if (aturat) return;
+        if (aturat) {
+            return;
+        }
 
         int numTromino = model.incrementaIOBtenirTrominoActual();
 
@@ -92,10 +96,18 @@ public class TrominoRecursiu extends Thread implements Notificar {
         boolean foratDretInf = foratX >= centreX + 1 && foratY >= centreY + 1;
 
         // Col·locar tromino al centre cobrint els 3 quadrants restants
-        if (!foratEsqSup) model.colocaTromino(centreX, centreY, numTromino);
-        if (!foratDretSup) model.colocaTromino(centreX, centreY + 1, numTromino);
-        if (!foratEsqInf) model.colocaTromino(centreX + 1, centreY, numTromino);
-        if (!foratDretInf) model.colocaTromino(centreX + 1, centreY + 1, numTromino);
+        if (!foratEsqSup) {
+            model.colocaTromino(centreX, centreY, numTromino);
+        }
+        if (!foratDretSup) {
+            model.colocaTromino(centreX, centreY + 1, numTromino);
+        }
+        if (!foratEsqInf) {
+            model.colocaTromino(centreX + 1, centreY, numTromino);
+        }
+        if (!foratDretInf) {
+            model.colocaTromino(centreX + 1, centreY + 1, numTromino);
+        }
 
         actualitzaVista();
         pausaExecucio();
@@ -122,14 +134,14 @@ public class TrominoRecursiu extends Thread implements Notificar {
         }
     }
 
-        /**
+    /**
      * Notifica la vista perquè es refresqui el tauler.
      */
     private void actualitzaVista() {
         controlador.notificar(Notificacio.PINTAR);
     }
 
-        /**
+    /**
      * Fa una pausa curta per evitar que el procés sigui massa ràpid per
      * visualització.
      */
@@ -141,33 +153,43 @@ public class TrominoRecursiu extends Thread implements Notificar {
         }
     }
 
-        /**
+    /**
      * Atura l'execució de la resolució del Tromino.
      */
     public void atura() {
         aturat = true;
     }
 
-        /**
+    /**
      * Coloca un tromino al cas base 2x2.
      */
     private void colocaTrominoBase(int x, int y, int numTromino) {
-        if (model.esCasellaBuida(x, y)) model.colocaTromino(x, y, numTromino);
-        if (model.esCasellaBuida(x, y + 1)) model.colocaTromino(x, y + 1, numTromino);
-        if (model.esCasellaBuida(x + 1, y)) model.colocaTromino(x + 1, y, numTromino);
-        if (model.esCasellaBuida(x + 1, y + 1)) model.colocaTromino(x + 1, y + 1, numTromino);
+        if (model.esCasellaBuida(x, y)) {
+            model.colocaTromino(x, y, numTromino);
+        }
+        if (model.esCasellaBuida(x, y + 1)) {
+            model.colocaTromino(x, y + 1, numTromino);
+        }
+        if (model.esCasellaBuida(x + 1, y)) {
+            model.colocaTromino(x + 1, y, numTromino);
+        }
+        if (model.esCasellaBuida(x + 1, y + 1)) {
+            model.colocaTromino(x + 1, y + 1, numTromino);
+        }
 
         actualitzaVista();
         pausaExecucio();
     }
 
-        /**
+    /**
      * Implementació del patró d'esdeveniments: escolta notificacions externes.
      *
      * @param n Tipus de notificació rebuda
      */
     @Override
     public void notificar(Notificacio n) {
-        if (n == Notificacio.ATURAR) atura();
+        if (n == Notificacio.ATURAR) {
+            atura();
+        }
     }
 }

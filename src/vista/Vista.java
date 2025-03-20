@@ -1,11 +1,11 @@
 package vista;
 
-import java.awt.*;
-import javax.swing.*;
 import controlador.Controlador;
-import model.Model;
 import controlador.Notificacio;
 import controlador.Notificar;
+import java.awt.*;
+import javax.swing.*;
+import model.Model;
 
 /**
  * Classe Vista que representa la interfície gràfica de l'usuari (GUI).
@@ -57,7 +57,8 @@ public class Vista extends JFrame implements Notificar {
     }
 
     /**
-     * Inicialitza els botons i els seus listeners per gestionar les accions de l'usuari.
+     * Inicialitza els botons i els seus listeners per gestionar les accions de
+     * l'usuari.
      */
     private void inicialitzarBotons() {
         botonsModeInici();
@@ -128,9 +129,9 @@ public class Vista extends JFrame implements Notificar {
         btnAturar.setEnabled(false);
     }
 
-
     /**
-     * Activa el mode d'execució, desactivant alguns botons per evitar interaccions incorrectes.
+     * Activa el mode d'execució, desactivant alguns botons per evitar
+     * interaccions incorrectes.
      */
     private void activarModeExecucio() {
         selectorMida.setEnabled(false);
@@ -140,7 +141,8 @@ public class Vista extends JFrame implements Notificar {
     }
 
     /**
-     * Desactiva el mode d'execució i permet a l'usuari interaccionar de nou amb els controls.
+     * Desactiva el mode d'execució i permet a l'usuari interaccionar de nou amb
+     * els controls.
      */
     private void desactivarModeExecucio() {
         selectorMida.setEnabled(true);
@@ -170,7 +172,8 @@ public class Vista extends JFrame implements Notificar {
     /**
      * Actualitza la visualització del temps d'execució a la interfície gràfica.
      *
-     * @param tempsReal Temps real d'execució, o Optional.empty() si encara no s'ha finalitzat
+     * @param tempsReal Temps real d'execució, o Optional.empty() si encara no
+     *                  s'ha finalitzat
      */
     private void actualitzaEtiquetaTemps(Double tempsReal) {
         lblTemps.setText(
@@ -181,14 +184,16 @@ public class Vista extends JFrame implements Notificar {
     }
 
     /**
-     * Gestiona les notificacions rebudes del controlador i actualitza la interfície gràfica en conseqüència.
+     * Gestiona les notificacions rebudes del controlador i actualitza la
+     * interfície gràfica en conseqüència.
      *
      * @param notificacio Tipus de notificació rebuda
      */
     @Override
     public void notificar(Notificacio notificacio) {
         switch (notificacio) {
-            case Notificacio.PINTAR -> taulerPanel.pintar();
+            case Notificacio.PINTAR ->
+                taulerPanel.pintar();
             case Notificacio.FINALITZA -> {
                 setTempsReal(controlador.getModel().getTempsExecucio());
                 desactivarModeExecucio();
@@ -204,18 +209,27 @@ public class Vista extends JFrame implements Notificar {
      * Retorna el color corresponent segons el nom seleccionat.
      *
      * @param colorNom Nom del color seleccionat
+     *
      * @return Color associat
      */
     private Color getColorPerNom(String colorNom) {
         return switch (colorNom) {
-            case "Vermell" -> Color.RED;
-            case "Blau" -> Color.BLUE;
-            case "Magenta" -> Color.MAGENTA;
-            case "Groc" -> Color.YELLOW;
-            case "Verd" -> Color.GREEN;
-            case "Taronja" -> Color.ORANGE;
-            case "Cian" -> Color.CYAN;
-            default -> Color.WHITE;
+            case "Vermell" ->
+                Color.RED;
+            case "Blau" ->
+                Color.BLUE;
+            case "Magenta" ->
+                Color.MAGENTA;
+            case "Groc" ->
+                Color.YELLOW;
+            case "Verd" ->
+                Color.GREEN;
+            case "Taronja" ->
+                Color.ORANGE;
+            case "Cian" ->
+                Color.CYAN;
+            default ->
+                Color.WHITE;
         };
     }
 
