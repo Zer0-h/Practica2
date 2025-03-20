@@ -2,10 +2,10 @@ package vista;
 
 import java.awt.*;
 import javax.swing.*;
-import main.Practica2;
+import controlador.Controlador;
 import model.Model;
-import model.Notificacio;
-import model.Notificar;
+import controlador.Notificacio;
+import controlador.Notificar;
 
 /**
  * Classe Vista que representa la interfície gràfica de l'usuari (GUI).
@@ -22,22 +22,22 @@ public class Vista extends JFrame implements Notificar {
     private final JComboBox<String> selectorColor;
     private JLabel lblTemps;
     private final TaulerPanel taulerPanel;
-    private final Practica2 principal;
+    private final Controlador controlador;
     private double tempsEstimat = 0.0;
 
     /**
      * Constructor que inicialitza la interfície gràfica.
      *
-     * @param p Instància principal de l'aplicació
+     * @param c Instància principal de l'aplicació
      */
-    public Vista(Practica2 p) {
-        principal = p;
+    public Vista(Controlador c) {
+        controlador = c;
         setTitle("Pràctica 2 - Backtracking");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Creació dels components principals de la interfície
-        selectorMida = new JComboBox<>(principal.getModel().getMidesSeleccionables());
+        selectorMida = new JComboBox<>(controlador.getModel().getMidesSeleccionables());
         selectorColor = new JComboBox<>(new String[]{"Blanc", "Vermell", "Blau", "Magenta", "Groc", "Verd", "Taronja", "Cian"});
         btnIniciar = new JButton("Iniciar");
         btnNetejar = new JButton("Neteja");
@@ -48,7 +48,7 @@ public class Vista extends JFrame implements Notificar {
         JPanel panelTemps = crearPanellTemps();
 
         add(panelControl, BorderLayout.NORTH);
-        taulerPanel = new TaulerPanel(principal);
+        taulerPanel = new TaulerPanel(controlador);
         add(taulerPanel, BorderLayout.CENTER);
         add(panelTemps, BorderLayout.SOUTH);
 
@@ -68,7 +68,7 @@ public class Vista extends JFrame implements Notificar {
 
         // Canviar mida del tauler quan l'usuari selecciona una nova mida
         selectorMida.addActionListener(e -> {
-            Model model = principal.getModel();
+            Model model = controlador.getModel();
             if (!model.getEnExecucio()) {
                 model.inicialitzaTauler((int) selectorMida.getSelectedItem());
                 btnNetejar.setEnabled(false);
@@ -79,7 +79,7 @@ public class Vista extends JFrame implements Notificar {
         // Canviar els colors dels trominos
         selectorColor.addActionListener(e -> {
             String colorSeleccionat = (String) selectorColor.getSelectedItem();
-            Model model = principal.getModel();
+            Model model = controlador.getModel();
 
             Color selectedColor;
 
@@ -100,21 +100,21 @@ public class Vista extends JFrame implements Notificar {
 
         // Iniciar la resolució del problema quan es prem el botó "Iniciar"
         btnIniciar.addActionListener(e -> {
-            principal.notificar(Notificacio.ARRANCAR);
+            controlador.notificar(Notificacio.ARRANCAR);
             activarModeExecucio();
-            setTempsEstimat(principal.getModel().estimaTempsExecucio());
+            setTempsEstimat(controlador.getModel().estimaTempsExecucio());
         });
 
         // Netejar el tauler quan es prem el botó "Neteja"
         btnNetejar.addActionListener(e -> {
-            principal.getModel().inicialitzaTauler((int) selectorMida.getSelectedItem());
+            controlador.getModel().inicialitzaTauler((int) selectorMida.getSelectedItem());
             taulerPanel.pintar();
             btnNetejar.setEnabled(false);
         });
 
         // Aturar l'execució del procés quan es prem el botó "Aturar"
         btnAturar.addActionListener(e -> {
-            principal.notificar(Notificacio.ATURAR);
+            controlador.notificar(Notificacio.ATURAR);
             desactivarModeExecucio();
         });
     }
@@ -214,7 +214,7 @@ public class Vista extends JFrame implements Notificar {
             case Notificacio.PINTAR ->
                 taulerPanel.pintar();
             case Notificacio.FINALITZA -> {
-                setTempsReal(principal.getModel().getTempsExecucio());
+                setTempsReal(controlador.getModel().getTempsExecucio());
                 desactivarModeExecucio();
             }
             case Notificacio.SELECCIONA_FORAT -> {

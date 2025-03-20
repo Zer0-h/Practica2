@@ -1,9 +1,7 @@
-package main;
+package controlador;
 
-import controlador.TrominoRecursiu;
+import model.TrominoRecursiu;
 import model.Model;
-import model.Notificacio;
-import model.Notificar;
 import vista.Vista;
 
 /**
@@ -12,7 +10,7 @@ import vista.Vista;
  *
  * @author tonitorres
  */
-public class Practica2 implements Notificar {
+public class Controlador implements Notificar {
 
     // Vista de la interfície gràfica d'usuari (GUI)
     private Vista vista;
@@ -29,7 +27,7 @@ public class Practica2 implements Notificar {
      * @param args Arguments de la línia de comandes (no s'utilitzen)
      */
     public static void main(String[] args) {
-        new Practica2().iniciar();
+        new Controlador().iniciar();
     }
 
     /**

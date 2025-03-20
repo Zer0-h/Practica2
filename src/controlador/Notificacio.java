@@ -1,4 +1,4 @@
-package model;
+package controlador;
 
 /**
  * Enumeració que defineix els diferents tipus de notificacions utilitzades

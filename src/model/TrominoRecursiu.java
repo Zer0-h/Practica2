@@ -1,11 +1,11 @@
-package controlador;
+package model;
 
+import controlador.Controlador;
 import java.util.ArrayList;
 import java.util.concurrent.*;
-import main.Practica2;
 import model.Model;
-import model.Notificacio;
-import model.Notificar;
+import controlador.Notificacio;
+import controlador.Notificar;
 
 /**
  * Classe encarregada de resoldre el problema del Tromino de manera recursiva.
@@ -17,18 +17,18 @@ import model.Notificar;
 public class TrominoRecursiu extends Thread implements Notificar {
 
     private boolean aturat; // Indica si l'execució ha de ser aturada
-    private final Practica2 principal;
+    private final Controlador controlador;
     private final Model model;
     private static ExecutorService executor;
 
     /**
      * Constructor que inicialitza la instància del controlador.
      *
-     * @param p Instància de la classe principal Practica2
+     * @param c Instància de la classe principal Practica2
      */
-    public TrominoRecursiu(Practica2 p) {
-        this.principal = p;
-        this.model = p.getModel();
+    public TrominoRecursiu(Controlador c) {
+        this.controlador = c;
+        this.model = c.getModel();
     }
 
     /**
@@ -53,7 +53,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
         model.setTempsExecucio(tempsTotal / 1000000000.0);
 
         // Notifica a la resta del sistema que el càlcul ha finalitzat
-        principal.notificar(Notificacio.FINALITZA);
+        controlador.notificar(Notificacio.FINALITZA);
     }
 
     public void resoldreTrominoMultithreading(int mida, int iniciX, int iniciY, int foratX, int foratY) {
@@ -172,7 +172,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
      * Notifica la vista perquè es refresqui el tauler.
      */
     private void actualitzaVista() {
-        principal.notificar(Notificacio.PINTAR);
+        controlador.notificar(Notificacio.PINTAR);
     }
 
     /**

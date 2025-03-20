@@ -2,9 +2,9 @@ package vista;
 
 import java.awt.*;
 import javax.swing.*;
-import main.Practica2;
+import controlador.Controlador;
 import model.Model;
-import model.Notificacio;
+import controlador.Notificacio;
 
 /**
  * Panell gràfic que representa el tauler de joc per al problema del Tromino.
@@ -15,18 +15,18 @@ import model.Notificacio;
  */
 public class TaulerPanel extends JPanel {
 
-    private final Practica2 principal;
+    private final Controlador controlador;
     private final Model model;
 
     /**
      * Constructor que inicialitza el panell i afegeix un listener per gestionar
      * els clics de l'usuari.
      *
-     * @param p Instància principal de l'aplicació
+     * @param c Instància principal de l'aplicació
      */
-    public TaulerPanel(Practica2 p) {
-        this.principal = p;
-        this.model = principal.getModel();
+    public TaulerPanel(Controlador c) {
+        this.controlador = c;
+        this.model = controlador.getModel();
         setPreferredSize(new Dimension(768, 768));
 
         // Activa el doble buffering per a un dibuix més suau
@@ -61,7 +61,7 @@ public class TaulerPanel extends JPanel {
 
                 // Assigna el nou forat i notifica el controlador
                 model.assignarForat(fila, columna);
-                principal.notificar(Notificacio.SELECCIONA_FORAT);
+                controlador.notificar(Notificacio.SELECCIONA_FORAT);
                 repaint();
             }
         });
@@ -128,7 +128,7 @@ public class TaulerPanel extends JPanel {
                 if (model.esCasellaForat(fila, columna)) {
                     g2.setColor(Color.BLACK);
                 } else if (model.esCasellaTromino(fila, columna)) {
-                    g2.setColor(principal.getModel().getColorPerTromino(fila, columna));
+                    g2.setColor(controlador.getModel().getColorPerTromino(fila, columna));
                 } else {
                     continue;
                 }
