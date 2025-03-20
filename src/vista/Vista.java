@@ -17,7 +17,7 @@ import model.Model;
 public class Vista extends JFrame implements Notificar {
 
     private final JButton btnIniciar, btnNetejar, btnAturar;
-    private final JComboBox<Integer> selectorMida;
+    private final JComboBox<Integer> selectorPotencia;
     private final JComboBox<String> selectorColor;
     private JLabel lblTemps;
     private final TaulerPanel taulerPanel;
@@ -36,7 +36,7 @@ public class Vista extends JFrame implements Notificar {
         setLayout(new BorderLayout());
 
         // Creació dels components principals de la interfície
-        selectorMida = new JComboBox<>(controlador.getModel().getMidesSeleccionables());
+        selectorPotencia = new JComboBox<>(controlador.getModel().getMidesSeleccionables());
         selectorColor = new JComboBox<>(new String[]{"Blanc", "Vermell", "Blau", "Magenta", "Groc", "Verd", "Taronja", "Cian"});
         btnIniciar = new JButton("Iniciar");
         btnNetejar = new JButton("Neteja");
@@ -65,10 +65,10 @@ public class Vista extends JFrame implements Notificar {
 
         Model model = controlador.getModel();
 
-        // Canviar mida del tauler quan l'usuari selecciona una nova mida
-        selectorMida.addActionListener(e -> {
+        // Canviar potencia del tauler quan l'usuari selecciona una nova potència
+        selectorPotencia.addActionListener(e -> {
             if (!model.getEnExecucio()) {
-                model.inicialitzaTauler((int) selectorMida.getSelectedItem());
+                model.inicialitzaTauler((int) selectorPotencia.getSelectedItem());
                 botonsModeInici();
                 taulerPanel.pintar();
             }
@@ -95,14 +95,14 @@ public class Vista extends JFrame implements Notificar {
     }
 
     /**
-     * Crea el panell de control amb la selecció de mida i els botons.
+     * Crea el panell de control amb la selecció de potència i els botons.
      *
      * @return JPanel amb els controls de l'usuari
      */
     private JPanel crearPanellControl() {
         JPanel panel = new JPanel();
-        panel.add(new JLabel("Mida del tauler:"));
-        panel.add(selectorMida);
+        panel.add(new JLabel("Potència:"));
+        panel.add(selectorPotencia);
         panel.add(new JLabel("Color:"));
         panel.add(selectorColor);
         panel.add(btnIniciar);
@@ -134,7 +134,7 @@ public class Vista extends JFrame implements Notificar {
      * interaccions incorrectes.
      */
     private void activarModeExecucio() {
-        selectorMida.setEnabled(false);
+        selectorPotencia.setEnabled(false);
         btnIniciar.setEnabled(false);
         btnNetejar.setEnabled(false);
         btnAturar.setEnabled(true);
@@ -145,7 +145,7 @@ public class Vista extends JFrame implements Notificar {
      * els controls.
      */
     private void desactivarModeExecucio() {
-        selectorMida.setEnabled(true);
+        selectorPotencia.setEnabled(true);
         btnNetejar.setEnabled(true);
         btnAturar.setEnabled(false);
     }
@@ -237,7 +237,7 @@ public class Vista extends JFrame implements Notificar {
      * Reinicia el tauler.
      */
     private void netejarTauler() {
-        controlador.getModel().inicialitzaTauler((int) selectorMida.getSelectedItem());
+        controlador.getModel().inicialitzaTauler((int) selectorPotencia.getSelectedItem());
         taulerPanel.pintar();
         botonsModeInici();
     }

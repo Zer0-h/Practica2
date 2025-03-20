@@ -38,7 +38,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
     @Override
     public void run() {
         aturat = false;
-        executor = Executors.newFixedThreadPool(4); // Crea el pool de fils per la primera crida
+        executor = Executors.newFixedThreadPool(4);
 
         long iniciTemps = System.nanoTime();
 

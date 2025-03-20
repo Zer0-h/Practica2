@@ -46,7 +46,7 @@ public class Model {
      */
     public Model() {
         constantTromino = 1.0;
-        midesSeleccionables = new Integer[]{4, 8, 16, 32, 64, 128};
+        midesSeleccionables = new Integer[]{2, 3, 4, 5, 6, 7};
         enExecucio = false;
         resolt = false;
         trominoColor = Color.WHITE;
@@ -125,8 +125,9 @@ public class Model {
      * GESTIÓ DEL TAULER
      * ==============================
      */
-    public void inicialitzaTauler(int size) {
-        tauler = new int[size][size];
+    public void inicialitzaTauler(int potencia) {
+        int tamany = (int) Math.pow(2, potencia);
+        tauler = new int[tamany][tamany];
         numTromino = new AtomicInteger(1);
         resolt = false;
         foratX = -1;
