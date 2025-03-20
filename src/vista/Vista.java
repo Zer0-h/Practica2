@@ -71,6 +71,7 @@ public class Vista extends JFrame implements Notificar {
             Model model = principal.getModel();
             if (!model.getEnExecucio()) {
                 model.inicialitzaTauler((int) selectorMida.getSelectedItem());
+                btnNetejar.setEnabled(false);
                 taulerPanel.pintar();
             }
         });
@@ -93,7 +94,7 @@ public class Vista extends JFrame implements Notificar {
                 case "Cian" -> selectedColor = Color.CYAN;
                 default -> selectedColor = Color.WHITE;
             }
-            
+
             model.setTrominoColor(selectedColor);
         });
 

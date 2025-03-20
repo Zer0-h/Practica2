@@ -37,7 +37,7 @@ public class TaulerPanel extends JPanel {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 // Evita la interacció si l'algorisme està en execució
-                if (model.getEnExecucio()) {
+                if (model.getEnExecucio() || model.getResolt()) {
                     return;
                 }
 
@@ -128,7 +128,7 @@ public class TaulerPanel extends JPanel {
                 if (model.esCasellaForat(fila, columna)) {
                     g2.setColor(Color.BLACK);
                 } else if (model.esCasellaTromino(fila, columna)) {
-                    g2.setColor(principal.getModel().getTrominoColor());
+                    g2.setColor(principal.getModel().getColorPerTromino(fila, columna));
                 } else {
                     continue;
                 }

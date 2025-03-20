@@ -1,6 +1,8 @@
 package model;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -31,8 +33,10 @@ public class Model {
 
     // Estat de l'execució
     private boolean enExecucio;
+    private boolean resolt;
 
     private Color trominoColor;
+    private final Map<Integer, Color> trominoColors;
 
     /**
      * Constructor de la classe Model. Inicialitza les mides del tauler
@@ -42,7 +46,9 @@ public class Model {
         constantTromino = 1.0;
         midesSeleccionables = new Integer[]{4, 8, 16, 32, 64, 128};
         enExecucio = false;
+        resolt = false;
         trominoColor = Color.WHITE;
+        trominoColors = new HashMap<>();
     }
 
     /**
@@ -74,6 +80,10 @@ public class Model {
         return enExecucio;
     }
 
+    public boolean getResolt() {
+        return resolt;
+    }
+
     /**
      * =======================
      * SETTERS
@@ -85,6 +95,10 @@ public class Model {
 
     public void setEnExecucio(boolean value) {
         enExecucio = value;
+    }
+
+    public void setResolt(boolean value) {
+        resolt = value;
     }
 
     /**
@@ -122,6 +136,7 @@ public class Model {
     public void inicialitzaTauler(int size) {
         tauler = new int[size][size];
         numTromino = new AtomicInteger(1);
+        resolt = false;
 
         // Inicialitza totes les cel·les a 0 (buides)
         for (int i = 0; i < size; i++) {
@@ -214,6 +229,8 @@ public class Model {
     public synchronized void colocaTromino(int x, int y, int trominoNumber) {
         if (tauler[x][y] == 0) {
             tauler[x][y] = trominoNumber;
+
+            trominoColors.put(trominoNumber, trominoColor);
         }
     }
 
@@ -253,7 +270,8 @@ public class Model {
         trominoColor = color;
     }
 
-    public Color getTrominoColor() {
-        return trominoColor;
+    public Color getColorPerTromino(int x, int y) {
+        int trominoNum = tauler[x][y];
+        return trominoColors.getOrDefault(trominoNum, Color.WHITE);
     }
 }

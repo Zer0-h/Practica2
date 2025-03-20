@@ -71,6 +71,7 @@ public class Practica2 implements Notificar {
             case Notificacio.FINALITZA -> {
                 // Marca el model com a no en execució i notifica a la vista.
                 model.setEnExecucio(false);
+                model.setResolt(true);
                 vista.notificar(n);
             }
             case Notificacio.PINTAR, Notificacio.SELECCIONA_FORAT ->
