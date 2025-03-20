@@ -10,8 +10,7 @@ import controlador.Notificar;
 /**
  * Classe Vista que representa la interfície gràfica de l'usuari (GUI).
  * Controla la interacció amb l'usuari i mostra l'estat del procés de resolució
- * del problema del Tromino.
- * Implementa el patró MVC com a part de la Vista.
+ * del problema del Tromino. Implementa el patró MVC com a part de la Vista.
  *
  * @author tonitorres
  */
@@ -58,59 +57,34 @@ public class Vista extends JFrame implements Notificar {
     }
 
     /**
-     * Inicialitza els botons i els seus listeners per gestionar les accions de
-     * l'usuari.
+     * Inicialitza els botons i els seus listeners per gestionar les accions de l'usuari.
      */
     private void inicialitzarBotons() {
-        btnIniciar.setEnabled(false);
-        btnNetejar.setEnabled(false);
-        btnAturar.setEnabled(false);
+        botonsModeInici();
+
+        Model model = controlador.getModel();
 
         // Canviar mida del tauler quan l'usuari selecciona una nova mida
         selectorMida.addActionListener(e -> {
-            Model model = controlador.getModel();
             if (!model.getEnExecucio()) {
                 model.inicialitzaTauler((int) selectorMida.getSelectedItem());
-                btnNetejar.setEnabled(false);
+                botonsModeInici();
                 taulerPanel.pintar();
             }
         });
 
         // Canviar els colors dels trominos
-        selectorColor.addActionListener(e -> {
-            String colorSeleccionat = (String) selectorColor.getSelectedItem();
-            Model model = controlador.getModel();
-
-            Color selectedColor;
-
-            switch (colorSeleccionat) {
-                case "Blanc" -> selectedColor = Color.WHITE;
-                case "Vermell" -> selectedColor = Color.RED;
-                case "Blau" -> selectedColor = Color.BLUE;
-                case "Magenta" -> selectedColor = Color.MAGENTA;
-                case "Groc" -> selectedColor = Color.YELLOW;
-                case "Verd" -> selectedColor = Color.GREEN;
-                case "Taronja" -> selectedColor = Color.ORANGE;
-                case "Cian" -> selectedColor = Color.CYAN;
-                default -> selectedColor = Color.WHITE;
-            }
-
-            model.setTrominoColor(selectedColor);
-        });
+        selectorColor.addActionListener(e -> model.setTrominoColor(getColorPerNom((String) selectorColor.getSelectedItem())));
 
         // Iniciar la resolució del problema quan es prem el botó "Iniciar"
         btnIniciar.addActionListener(e -> {
             controlador.notificar(Notificacio.ARRANCAR);
             activarModeExecucio();
-            setTempsEstimat(controlador.getModel().estimaTempsExecucio());
+            setTempsEstimat(model.estimaTempsExecucio());
         });
 
         // Netejar el tauler quan es prem el botó "Neteja"
-        btnNetejar.addActionListener(e -> {
-            controlador.getModel().inicialitzaTauler((int) selectorMida.getSelectedItem());
-            taulerPanel.pintar();
-            btnNetejar.setEnabled(false);
-        });
+        btnNetejar.addActionListener(e -> netejarTauler());
 
         // Aturar l'execució del procés quan es prem el botó "Aturar"
         btnAturar.addActionListener(e -> {
@@ -148,9 +122,15 @@ public class Vista extends JFrame implements Notificar {
         return panel;
     }
 
+    private void botonsModeInici() {
+        btnIniciar.setEnabled(false);
+        btnNetejar.setEnabled(false);
+        btnAturar.setEnabled(false);
+    }
+
+
     /**
-     * Activa el mode d'execució, desactivant alguns botons per evitar
-     * interaccions incorrectes.
+     * Activa el mode d'execució, desactivant alguns botons per evitar interaccions incorrectes.
      */
     private void activarModeExecucio() {
         selectorMida.setEnabled(false);
@@ -160,8 +140,7 @@ public class Vista extends JFrame implements Notificar {
     }
 
     /**
-     * Desactiva el mode d'execució i permet a l'usuari interaccionar de nou amb
-     * els controls.
+     * Desactiva el mode d'execució i permet a l'usuari interaccionar de nou amb els controls.
      */
     private void desactivarModeExecucio() {
         selectorMida.setEnabled(true);
@@ -191,8 +170,7 @@ public class Vista extends JFrame implements Notificar {
     /**
      * Actualitza la visualització del temps d'execució a la interfície gràfica.
      *
-     * @param tempsReal Temps real d'execució, o null si encara no s'ha
-     *                  finalitzat
+     * @param tempsReal Temps real d'execució, o Optional.empty() si encara no s'ha finalitzat
      */
     private void actualitzaEtiquetaTemps(Double tempsReal) {
         lblTemps.setText(
@@ -203,16 +181,14 @@ public class Vista extends JFrame implements Notificar {
     }
 
     /**
-     * Gestiona les notificacions rebudes del controlador i actualitza la
-     * interfície gràfica en conseqüència.
+     * Gestiona les notificacions rebudes del controlador i actualitza la interfície gràfica en conseqüència.
      *
      * @param notificacio Tipus de notificació rebuda
      */
     @Override
     public void notificar(Notificacio notificacio) {
         switch (notificacio) {
-            case Notificacio.PINTAR ->
-                taulerPanel.pintar();
+            case Notificacio.PINTAR -> taulerPanel.pintar();
             case Notificacio.FINALITZA -> {
                 setTempsReal(controlador.getModel().getTempsExecucio());
                 desactivarModeExecucio();
@@ -222,5 +198,33 @@ public class Vista extends JFrame implements Notificar {
                 btnNetejar.setEnabled(true);
             }
         }
+    }
+
+    /**
+     * Retorna el color corresponent segons el nom seleccionat.
+     *
+     * @param colorNom Nom del color seleccionat
+     * @return Color associat
+     */
+    private Color getColorPerNom(String colorNom) {
+        return switch (colorNom) {
+            case "Vermell" -> Color.RED;
+            case "Blau" -> Color.BLUE;
+            case "Magenta" -> Color.MAGENTA;
+            case "Groc" -> Color.YELLOW;
+            case "Verd" -> Color.GREEN;
+            case "Taronja" -> Color.ORANGE;
+            case "Cian" -> Color.CYAN;
+            default -> Color.WHITE;
+        };
+    }
+
+    /**
+     * Reinicia el tauler.
+     */
+    private void netejarTauler() {
+        controlador.getModel().inicialitzaTauler((int) selectorMida.getSelectedItem());
+        taulerPanel.pintar();
+        botonsModeInici();
     }
 }

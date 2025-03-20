@@ -7,8 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Classe Model que representa el tauler i la lògica del problema de Tromino.
- * S'encarrega de gestionar l'estat del tauler i proporcionar mètodes per
- * manipular-lo.
+ * S'encarrega de gestionar l'estat del tauler i proporcionar mètodes per manipular-lo.
  *
  * @author tonitorres
  */
@@ -35,12 +34,13 @@ public class Model {
     private boolean enExecucio;
     private boolean resolt;
 
+    // Colors per als trominos
     private Color trominoColor;
     private final Map<Integer, Color> trominoColors;
 
     /**
-     * Constructor de la classe Model. Inicialitza les mides del tauler
-     * disponibles i estableix valors per defecte.
+     * Constructor de la classe Model. Inicialitza les mides del tauler disponibles
+     * i estableix valors per defecte.
      */
     public Model() {
         constantTromino = 1.0;
@@ -51,10 +51,9 @@ public class Model {
         trominoColors = new HashMap<>();
     }
 
-    /**
-     * =======================
-     * GETTERS
-     * =======================
+    /** =======================
+     *  GETTERS
+     *  =======================
      */
     public Integer[] getMidesSeleccionables() {
         return midesSeleccionables;
@@ -84,10 +83,9 @@ public class Model {
         return resolt;
     }
 
-    /**
-     * =======================
-     * SETTERS
-     * =======================
+    /** =======================
+     *  SETTERS
+     *  =======================
      */
     public void setTempsExecucio(double value) {
         tempsExecucio = value;
@@ -102,9 +100,8 @@ public class Model {
     }
 
     /**
-     * Calcula la constant multiplicativa del procés del tromino per estimar el
-     * temps d'execució basant-se en el temps transcorregut.
-     *
+     * Calcula la constant multiplicativa del procés del tromino per estimar
+     * el temps d'execució basant-se en el temps transcorregut.
      * @param elapsedTime Temps total d'execució en nanosegons
      */
     public void calculaConstantTromino(double elapsedTime) {
@@ -112,139 +109,72 @@ public class Model {
     }
 
     /**
-     * Estima el temps d'execució del procés total per a la mida actual del
-     * tauler.
-     *
+     * Estima el temps d'execució del procés total per a la mida actual del tauler.
      * @return Temps estimat en segons
      */
     public double estimaTempsExecucio() {
-        return (constantTromino * Math.pow(tauler.length, 2)) / 1_000_000_000.0; // Convertim de nanosegons a segons
+        return (constantTromino * Math.pow(tauler.length, 2)) / 1_000_000_000.0;
     }
 
-    /**
-     * ==============================
-     * GESTIÓ DEL TAULER
-     * ==============================
-     */
-    /**
-     * Inicialitza el tauler amb la mida especificada i reinicia els valors
-     * necessaris.
-     *
-     * @param size Mida del tauler
+    /** ==============================
+     *  GESTIÓ DEL TAULER
+     *  ==============================
      */
     public void inicialitzaTauler(int size) {
         tauler = new int[size][size];
         numTromino = new AtomicInteger(1);
         resolt = false;
-
-        // Inicialitza totes les cel·les a 0 (buides)
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                tauler[i][j] = 0;
-            }
-        }
-
-        // Inicialitza la posició del forat com no col·locat
         foratX = -1;
         foratY = -1;
     }
 
-    /**
-     * Assigna el forat inicial al tauler.
-     *
-     * @param x Coordenada X del forat
-     * @param y Coordenada Y del forat
-     */
     public void assignarForat(int x, int y) {
         foratX = x;
         foratY = y;
         tauler[foratX][foratY] = -1;
     }
 
-    /**
-     * Elimina el forat actual del tauler.
-     */
     public void netejarForat() {
         tauler[foratX][foratY] = 0;
     }
 
-    /**
-     * Comprova si hi ha un forat seleccionat.
-     *
-     * @return Cert si hi ha un forat seleccionat, fals en cas contrari
-     */
     public boolean hiHaForatSeleccionat() {
         return foratX != -1 && foratY != -1;
     }
 
-    /*
-     * ==============================
-     * GESTIÓ DELS TROMINOS
-     * ==============================
+    /** ==============================
+     *  GESTIÓ DELS TROMINOS
+     *  ==============================
      */
-    /**
-     * Comprova si una casella està buida.
-     *
-     * @param x Coordenada X
-     * @param y Coordenada Y
-     *
-     * @return Cert si la casella està buida, fals en cas contrari
-     */
+
     public boolean esCasellaBuida(int x, int y) {
         return tauler[x][y] == 0;
     }
 
-    /**
-     * Comprova si una casella conté un forat.
-     *
-     * @param x Coordenada X
-     * @param y Coordenada Y
-     *
-     * @return Cert si la casella conté un forat, fals en cas contrari
-     */
     public boolean esCasellaForat(int x, int y) {
         return tauler[x][y] == -1;
     }
 
-    /**
-     * Comprova si una casella conté un tromino.
-     *
-     * @param x Coordenada X
-     * @param y Coordenada Y
-     *
-     * @return Cert si la casella conté un tromino, fals en cas contrari
-     */
     public boolean esCasellaTromino(int x, int y) {
         return tauler[x][y] > 0;
     }
 
-    /**
-     * Col·loca un tromino en una casella del tauler.
-     *
-     * @param x Coordenada X
-     * @param y Coordenada Y
-     * @param trominoNumber Numero del tromino
-     */
     public synchronized void colocaTromino(int x, int y, int trominoNumber) {
         if (tauler[x][y] == 0) {
             tauler[x][y] = trominoNumber;
-
             trominoColors.put(trominoNumber, trominoColor);
         }
     }
 
-    /**
-     * Incrementa el número de trominos col·locats.
-     */
     public synchronized int incrementaIOBtenirTrominoActual() {
         return numTromino.incrementAndGet();
     }
 
-    /**
-     * ==============================
-     * DETECCIÓ DE BORDES
-     * ==============================
+    /** ==============================
+     *  DETECCIÓ DE BORDES
+     *  ==============================
      */
+
     public boolean esVoraSuperiorTromino(int x, int y) {
         return x == 0 || tauler[x - 1][y] != tauler[x][y];
     }
@@ -261,10 +191,10 @@ public class Model {
         return y == tauler[x].length - 1 || tauler[x][y + 1] != tauler[x][y];
     }
 
-    public int[][] test() {
-        return tauler;
-    }
-
+    /** ==============================
+     *  COLOR DELS TROMINOS
+     *  ==============================
+     */
     public void setTrominoColor(Color color) {
         trominoColor = color;
     }

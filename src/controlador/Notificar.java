@@ -1,7 +1,5 @@
 package controlador;
 
-import controlador.Notificacio;
-
 /**
  * Interfície que defineix el patró d'esdeveniments per a la comunicació entre
  * el Model, la Vista i el Controlador.

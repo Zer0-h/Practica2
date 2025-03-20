@@ -36,35 +36,41 @@ public class TaulerPanel extends JPanel {
         addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                // Evita la interacció si l'algorisme està en execució
+                // Evita la interacció si l'algorisme està en execució o ja està resolt
                 if (model.getEnExecucio() || model.getResolt()) {
                     return;
                 }
 
-                // Calcula la mida del tauler i la mida de cada casella
                 int midaPanel = Math.min(getWidth(), getHeight());
                 int midaCasella = midaPanel / model.getMidaTauler();
 
-                // Calcula la fila i la columna on s'ha fet clic
                 int fila = e.getY() / midaCasella;
                 int columna = e.getX() / midaCasella;
 
-                // Evita clics fora dels límits del tauler
-                if (fila >= model.getMidaTauler() || columna >= model.getMidaTauler()) {
+                if (!esClicValid(fila, columna)) {
                     return;
                 }
 
-                // Si ja hi ha un forat seleccionat, el neteja abans d'assignar-ne un de nou
                 if (model.hiHaForatSeleccionat()) {
                     model.netejarForat();
                 }
 
-                // Assigna el nou forat i notifica el controlador
                 model.assignarForat(fila, columna);
                 controlador.notificar(Notificacio.SELECCIONA_FORAT);
                 repaint();
             }
         });
+    }
+
+    /**
+     * Verifica si el clic està dins dels límits vàlids del tauler.
+     *
+     * @param fila Fila on s'ha fet clic
+     * @param columna Columna on s'ha fet clic
+     * @return Cert si el clic és vàlid, fals en cas contrari
+     */
+    private boolean esClicValid(int fila, int columna) {
+        return fila < model.getMidaTauler() && columna < model.getMidaTauler();
     }
 
     /**
@@ -128,7 +134,7 @@ public class TaulerPanel extends JPanel {
                 if (model.esCasellaForat(fila, columna)) {
                     g2.setColor(Color.BLACK);
                 } else if (model.esCasellaTromino(fila, columna)) {
-                    g2.setColor(controlador.getModel().getColorPerTromino(fila, columna));
+                    g2.setColor(model.getColorPerTromino(fila, columna));
                 } else {
                     continue;
                 }

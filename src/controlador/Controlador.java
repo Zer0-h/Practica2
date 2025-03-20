@@ -67,7 +67,7 @@ public class Controlador implements Notificar {
             case Notificacio.ATURAR ->
                 aturarResolucio();   // Atura la resolució del problema
             case Notificacio.FINALITZA -> {
-                // Marca el model com a no en execució i notifica a la vista.
+                // Marca el model com a no en execució i finalitzat i notifica a la vista.
                 model.setEnExecucio(false);
                 model.setResolt(true);
                 vista.notificar(n);
