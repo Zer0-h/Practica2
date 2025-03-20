@@ -128,7 +128,7 @@ public class TaulerPanel extends JPanel {
                 if (model.esCasellaForat(fila, columna)) {
                     g2.setColor(Color.BLACK);
                 } else if (model.esCasellaTromino(fila, columna)) {
-                    g2.setColor(principal.getModel().getColorPerTromino(fila, columna));
+                    g2.setColor(principal.getModel().getTrominoColor());
                 } else {
                     continue;
                 }

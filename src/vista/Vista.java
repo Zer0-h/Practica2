@@ -19,6 +19,7 @@ public class Vista extends JFrame implements Notificar {
 
     private final JButton btnIniciar, btnNetejar, btnAturar;
     private final JComboBox<Integer> selectorMida;
+    private final JComboBox<String> selectorColor;
     private JLabel lblTemps;
     private final TaulerPanel taulerPanel;
     private final Practica2 principal;
@@ -37,6 +38,7 @@ public class Vista extends JFrame implements Notificar {
 
         // Creació dels components principals de la interfície
         selectorMida = new JComboBox<>(principal.getModel().getMidesSeleccionables());
+        selectorColor = new JComboBox<>(new String[]{"Blanc", "Vermell", "Blau", "Magenta", "Groc", "Verd", "Taronja", "Cian"});
         btnIniciar = new JButton("Iniciar");
         btnNetejar = new JButton("Neteja");
         btnAturar = new JButton("Aturar");
@@ -73,6 +75,28 @@ public class Vista extends JFrame implements Notificar {
             }
         });
 
+        // Canviar els colors dels trominos
+        selectorColor.addActionListener(e -> {
+            String colorSeleccionat = (String) selectorColor.getSelectedItem();
+            Model model = principal.getModel();
+
+            Color selectedColor;
+
+            switch (colorSeleccionat) {
+                case "Blanc" -> selectedColor = Color.WHITE;
+                case "Vermell" -> selectedColor = Color.RED;
+                case "Blau" -> selectedColor = Color.BLUE;
+                case "Magenta" -> selectedColor = Color.MAGENTA;
+                case "Groc" -> selectedColor = Color.YELLOW;
+                case "Verd" -> selectedColor = Color.GREEN;
+                case "Taronja" -> selectedColor = Color.ORANGE;
+                case "Cian" -> selectedColor = Color.CYAN;
+                default -> selectedColor = Color.WHITE;
+            }
+            
+            model.setTrominoColor(selectedColor);
+        });
+
         // Iniciar la resolució del problema quan es prem el botó "Iniciar"
         btnIniciar.addActionListener(e -> {
             principal.notificar(Notificacio.ARRANCAR);
@@ -103,6 +127,8 @@ public class Vista extends JFrame implements Notificar {
         JPanel panel = new JPanel();
         panel.add(new JLabel("Mida del tauler:"));
         panel.add(selectorMida);
+        panel.add(new JLabel("Color:"));
+        panel.add(selectorColor);
         panel.add(btnIniciar);
         panel.add(btnNetejar);
         panel.add(btnAturar);

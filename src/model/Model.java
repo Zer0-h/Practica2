@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.Color;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Classe Model que representa el tauler i la lògica del problema de Tromino.
@@ -22,7 +23,7 @@ public class Model {
     private double tempsExecucio;
 
     // Comptador de trominos col·locats
-    private int numTromino;
+    private AtomicInteger numTromino;
 
     // Coordenades del forat inicial
     private int foratX;
@@ -30,6 +31,8 @@ public class Model {
 
     // Estat de l'execució
     private boolean enExecucio;
+
+    private Color trominoColor;
 
     /**
      * Constructor de la classe Model. Inicialitza les mides del tauler
@@ -39,6 +42,7 @@ public class Model {
         constantTromino = 1.0;
         midesSeleccionables = new Integer[]{4, 8, 16, 32, 64, 128};
         enExecucio = false;
+        trominoColor = Color.WHITE;
     }
 
     /**
@@ -117,7 +121,7 @@ public class Model {
      */
     public void inicialitzaTauler(int size) {
         tauler = new int[size][size];
-        numTromino = 1;
+        numTromino = new AtomicInteger(1);
 
         // Inicialitza totes les cel·les a 0 (buides)
         for (int i = 0; i < size; i++) {
@@ -205,16 +209,19 @@ public class Model {
      *
      * @param x Coordenada X
      * @param y Coordenada Y
+     * @param trominoNumber Numero del tromino
      */
-    public void colocaTromino(int x, int y) {
-        tauler[x][y] = numTromino;
+    public synchronized void colocaTromino(int x, int y, int trominoNumber) {
+        if (tauler[x][y] == 0) {
+            tauler[x][y] = trominoNumber;
+        }
     }
 
     /**
      * Incrementa el número de trominos col·locats.
      */
-    public void incrementaTrominoActual() {
-        numTromino++;
+    public int incrementaIOBtenirTrominoActual() {
+        return numTromino.incrementAndGet();
     }
 
     /**
@@ -238,25 +245,15 @@ public class Model {
         return y == tauler[x].length - 1 || tauler[x][y + 1] != tauler[x][y];
     }
 
-    /**
-     * Retorna un color associat a cada tromino, per representar-los
-     * gràficament.
-     *
-     * @param x Coordenada X
-     * @param y Coordenada Y
-     *
-     * @return Color del tromino en aquella posició
-     */
-    public Color getColorPerTromino(int x, int y) {
-        int trominoNum = tauler[x][y];
+    public int[][] test() {
+        return tauler;
+    }
 
-        if (trominoNum <= 0) {
-            return Color.WHITE;
-        }
+    public void setTrominoColor(Color color) {
+        trominoColor = color;
+    }
 
-        return new Color[]{
-            Color.RED, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.GREEN,
-            Color.ORANGE, Color.CYAN, Color.PINK
-        }[(trominoNum - 1) % 8];
+    public Color getTrominoColor() {
+        return trominoColor;
     }
 }
