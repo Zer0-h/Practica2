@@ -108,7 +108,7 @@ public class Model {
      * @param elapsedTime Temps total d'execució en nanosegons
      */
     public void calculaConstantTromino(double elapsedTime) {
-        constantTromino = (elapsedTime * 1.0) / Math.pow(4, Math.log(tauler.length) / Math.log(2));
+        constantTromino = (elapsedTime * 1.0) / Math.pow(tauler.length, 2);
     }
 
     /**
@@ -118,8 +118,7 @@ public class Model {
      * @return Temps estimat en segons
      */
     public double estimaTempsExecucio() {
-        long estimatedCalls = (long) Math.pow(4, Math.log(tauler.length) / Math.log(2));
-        return (constantTromino * estimatedCalls) / 1_000_000_000.0; // Convertim de nanosegons a segons
+        return (constantTromino * Math.pow(tauler.length, 2)) / 1_000_000_000.0; // Convertim de nanosegons a segons
     }
 
     /**
@@ -237,7 +236,7 @@ public class Model {
     /**
      * Incrementa el número de trominos col·locats.
      */
-    public int incrementaIOBtenirTrominoActual() {
+    public synchronized int incrementaIOBtenirTrominoActual() {
         return numTromino.incrementAndGet();
     }
 

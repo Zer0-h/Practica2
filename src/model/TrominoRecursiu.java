@@ -29,6 +29,7 @@ public class TrominoRecursiu extends Thread implements Notificar {
     public TrominoRecursiu(Controlador c) {
         this.controlador = c;
         this.model = c.getModel();
+        executor = Executors.newFixedThreadPool(4);
     }
 
     /**
@@ -38,14 +39,24 @@ public class TrominoRecursiu extends Thread implements Notificar {
     @Override
     public void run() {
         aturat = false;
-        executor = Executors.newFixedThreadPool(4);
 
         // Captura el temps d'inici en nanosegons per a més precisió
         long iniciTemps = System.nanoTime();
 
         // Inicia la resolució del problema
-        resoldreTrominoMultithreading(model.getMidaTauler(), 0, 0, model.getForatX(), model.getForatY());
-        executor.shutdown();
+        try {
+            resoldreTrominoMultithreading(model.getMidaTauler(), 0, 0, model.getForatX(), model.getForatY());
+        } finally {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
 
         // Calcula el temps total d'execució en segons
         long tempsTotal = System.nanoTime() - iniciTemps;
@@ -93,20 +104,18 @@ public class TrominoRecursiu extends Thread implements Notificar {
         actualitzaVista();
         pausaExecucio();
 
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ArrayList<Future<?>> futures = new ArrayList<>();
+        futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX, iniciY, foratEsqSup ? foratX : centreX, foratEsqSup ? foratY : centreY)));
+        futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX, iniciY + mida / 2, foratDretSup ? foratX : centreX, foratDretSup ? foratY : centreY + 1)));
+        futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX + mida / 2, iniciY, foratEsqInf ? foratX : centreX + 1, foratEsqInf ? foratY : centreY)));
+        futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX + mida / 2, iniciY + mida / 2, foratDretInf ? foratX : centreX + 1, foratDretInf ? foratY : centreY + 1)));
 
         try {
-            ArrayList<Future<?>> futures = new ArrayList<>();
-            futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX, iniciY, foratEsqSup ? foratX : centreX, foratEsqSup ? foratY : centreY)));
-            futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX, iniciY + mida / 2, foratDretSup ? foratX : centreX, foratDretSup ? foratY : centreY + 1)));
-            futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX + mida / 2, iniciY, foratEsqInf ? foratX : centreX + 1, foratEsqInf ? foratY : centreY)));
-            futures.add(executor.submit(() -> resoldreTromino(mida / 2, iniciX + mida / 2, iniciY + mida / 2, foratDretInf ? foratX : centreX + 1, foratDretInf ? foratY : centreY + 1)));
-
             for (Future<?> future : futures) {
-                future.get(); // Wait for all threads to complete
+                future.get();
             }
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 
