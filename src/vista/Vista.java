@@ -101,7 +101,7 @@ public class Vista extends JFrame implements Notificar {
      */
     private JPanel crearPanellControl() {
         JPanel panel = new JPanel();
-        panel.add(new JLabel("Potència:"));
+        panel.add(new JLabel("Profunditat:"));
         panel.add(selectorPotencia);
         panel.add(new JLabel("Color:"));
         panel.add(selectorColor);
